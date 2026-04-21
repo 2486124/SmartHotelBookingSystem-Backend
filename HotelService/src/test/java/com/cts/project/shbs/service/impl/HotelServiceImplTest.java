@@ -23,9 +23,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class HotelServiceImplTest {
 
-    @Mock HotelRepository hotelRepository;
+    @Mock
+    HotelRepository hotelRepository;
 
-    @InjectMocks HotelServiceImpl hotelService;
+    @InjectMocks
+    HotelServiceImpl hotelService;
 
     private Hotel hotel;
     private HotelRequest hotelRequest;
@@ -49,7 +51,7 @@ class HotelServiceImplTest {
         hotelRequest.setImageUrl("https://example.com/img.jpg");
     }
 
-    // ── createHotel ───────────────────────────────────────────────────────────
+    // createHotel
 
     @Nested
     @DisplayName("createHotel()")
@@ -108,7 +110,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── updateHotel ───────────────────────────────────────────────────────────
+    // updateHotel
 
     @Nested
     @DisplayName("updateHotel()")
@@ -146,7 +148,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── deleteHotel ───────────────────────────────────────────────────────────
+    // deleteHotel
 
     @Nested
     @DisplayName("deleteHotel()")
@@ -174,8 +176,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── getHotelById ──────────────────────────────────────────────────────────
-
+    // getHotelById
     @Nested
     @DisplayName("getHotelById()")
     class GetHotelById {
@@ -202,8 +203,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── getAllApprovedHotels ───────────────────────────────────────────────────
-
+    // getAllApprovedHotels
     @Nested
     @DisplayName("getAllApprovedHotels()")
     class GetAllApprovedHotels {
@@ -230,8 +230,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── approveHotel ──────────────────────────────────────────────────────────
-
+    // approveHotel
     @Nested
     @DisplayName("approveHotel()")
     class ApproveHotel {
@@ -272,8 +271,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── searchApprovedHotels ──────────────────────────────────────────────────
-
+    // searchApprovedHotels
     @Nested
     @DisplayName("searchApprovedHotels()")
     class SearchApprovedHotels {
@@ -300,8 +298,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── searchAllHotelsForAdmin ───────────────────────────────────────────────
-
+    // searchAllHotelsForAdmin
     @Nested
     @DisplayName("searchAllHotelsForAdmin()")
     class SearchAllHotelsForAdmin {
@@ -329,8 +326,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── deleteOwnHotel ────────────────────────────────────────────────────────
-
+    // deleteOwnHotel
     @Nested
     @DisplayName("deleteOwnHotel()")
     class DeleteOwnHotel {
@@ -367,8 +363,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── getHotelByManagerId ───────────────────────────────────────────────────
-
+    // getHotelByManagerId
     @Nested
     @DisplayName("getHotelByManagerId()")
     class GetHotelByManagerId {
@@ -394,8 +389,7 @@ class HotelServiceImplTest {
         }
     }
 
-    // ── updateHotelRating ─────────────────────────────────────────────────────
-
+    // updateHotelRating
     @Nested
     @DisplayName("updateHotelRating()")
     class UpdateHotelRating {

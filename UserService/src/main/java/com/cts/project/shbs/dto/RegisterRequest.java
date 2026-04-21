@@ -29,7 +29,7 @@ public class RegisterRequest {
     @NotBlank(message = "Contact number is required")
     @Pattern(
         regexp = "^[6-9]\\d{9}$",
-        message = "Contact number must be a valid 10-digit Indian mobile number"
+        message = "Contact number must be a valid 10-digit mobile number"
     )
     private String contactNumber;
 

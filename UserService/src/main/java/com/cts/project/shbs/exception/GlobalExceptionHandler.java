@@ -39,6 +39,11 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.GONE, ex.getMessage());
     }
 
+    @ExceptionHandler(LoyaltyServiceException.class)
+    public ResponseEntity<Object> handleLoyaltyService(LoyaltyServiceException ex) {
+        return buildResponse(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+    }
+
     // Catch-all fallback
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception ex) {

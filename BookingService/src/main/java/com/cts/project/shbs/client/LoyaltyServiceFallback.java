@@ -10,25 +10,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class LoyaltyServiceFallback implements LoyaltyServiceClient {
-
-    @Override
-    public Integer getPointsBalance(Long userId) {
-        log.warn("Loyalty Service unavailable — getPointsBalance fallback for User ID: {}", userId);
-        return 0;
-    }
-
-    @Override
-    public Double previewDiscount(Integer points) {
-        log.warn("Loyalty Service unavailable — previewDiscount fallback for points: {}", points);
-        return 0.0;
-    }
-
-    @Override
-    public Integer previewPoints(Double amount) {
-        log.warn("Loyalty Service unavailable — previewPoints fallback for amount: {}", amount);
-        return 0;
-    }
-
     @Override
     public ResponseEntity<String> redeemPoints(RedemptionRequestDto request) {
         log.warn("Loyalty Service unavailable — redeemPoints fallback for User ID: {}", request.getUserId());

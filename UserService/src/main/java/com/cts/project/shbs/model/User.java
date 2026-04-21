@@ -1,7 +1,8 @@
 package com.cts.project.shbs.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "`User`")
@@ -22,10 +23,11 @@ public class User {
             length = 255)
     private String email;
 
+    @JsonIgnore
     @Column(name = "Password", nullable = false, length = 255)
     private String password;
 
-    // Values: "ADMIN", "HOTEL_MANAGER", "GUEST"
+    // Values: "ROLE_ADMIN", "ROLE_HOTEL_MANAGER", "ROLE_GUEST"
     @Enumerated(EnumType.STRING)
     @Column(name = "Role", nullable = false, length = 50)
     private Role role;

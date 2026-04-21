@@ -1,5 +1,6 @@
 package com.cts.project.shbs.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +17,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.cts.project.shbs.security.CustomUserDetailsService;
 
 @Configuration
-@EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-	@Autowired
-	private CustomUserDetailsService userDetailsService;
+	private final CustomUserDetailsService userDetailsService;
 
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
@@ -44,8 +44,6 @@ public class SecurityConfig {
 	    http.csrf(csrf -> csrf.disable())
 	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 	        .authorizeHttpRequests(auth -> auth
-//	             Everything else requires authentication
-//	            .anyRequest().authenticated()
 	        		.anyRequest().permitAll()
 	        );
 

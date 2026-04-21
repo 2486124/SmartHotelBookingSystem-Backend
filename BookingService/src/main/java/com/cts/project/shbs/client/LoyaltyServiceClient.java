@@ -12,17 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "loyalty-service", url = "${loyalty.service.url:http://localhost:8085}", fallback = LoyaltyServiceFallback.class)
+@FeignClient(name = "loyalty-service", fallback = LoyaltyServiceFallback.class)
 public interface LoyaltyServiceClient {
-
-	@GetMapping("/api/loyalty/balance/{userId}")
-	Integer getPointsBalance(@PathVariable("userId") Long userId);
-
-	@GetMapping("/api/loyalty/calculate-discount/{points}")
-	Double previewDiscount(@PathVariable("points") Integer points);
-
-	@GetMapping("/api/loyalty/calculate-points/{amount}")
-	Integer previewPoints(@PathVariable("amount") Double amount);
 
 	@PostMapping("/api/loyalty/redeem")
 	ResponseEntity<String> redeemPoints(@RequestBody RedemptionRequestDto request);

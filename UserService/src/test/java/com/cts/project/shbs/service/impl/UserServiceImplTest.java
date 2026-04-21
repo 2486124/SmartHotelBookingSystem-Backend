@@ -10,6 +10,7 @@ import com.cts.project.shbs.model.User;
 import com.cts.project.shbs.repository.UserRepository;
 import com.cts.project.shbs.security.JwtUtils;
 import com.cts.project.shbs.service.EmailService;
+import com.cts.project.shbs.service.LoyaltyInitService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -43,6 +43,7 @@ class UserServiceImplTest {
     @Mock EmailService emailService;
     @Mock LoyaltyServiceClient loyaltyServiceClient;
     @Mock AuthenticationManager authenticationManager;
+    @Mock LoyaltyInitService loyaltyInitService;
 
     @InjectMocks UserServiceImpl userService;
 
@@ -73,8 +74,6 @@ class UserServiceImplTest {
         registerRequest.setPassword("plain123");
         registerRequest.setRole(Role.ROLE_GUEST);
         registerRequest.setContactNumber("9876543210");
-        
-        ReflectionTestUtils.setField(userService, "self", userService);
     }
 
     // ── registerUser ──────────────────────────────────────────────────────────
@@ -93,7 +92,7 @@ class UserServiceImplTest {
             User result = userService.registerUser(registerRequest);
 
             assertThat(result).isEqualTo(guestUser);
-            verify(loyaltyServiceClient).initializeLoyaltyAccount(1L);
+            verify(loyaltyInitService).initializeLoyaltyAccount(1L);
         }
 
         @Test
@@ -107,8 +106,7 @@ class UserServiceImplTest {
             when(userRepository.save(any(User.class))).thenReturn(adminUser);
 
             userService.registerUser(registerRequest);
-
-            verifyNoInteractions(loyaltyServiceClient);
+            verifyNoInteractions(loyaltyInitService);
         }
 
         @Test
@@ -129,13 +127,13 @@ class UserServiceImplTest {
             when(passwordEncoder.encode(any())).thenReturn("encodedPass");
             when(userRepository.save(any())).thenReturn(guestUser);
             doThrow(new RuntimeException("Loyalty service down"))
-                    .when(loyaltyServiceClient).initializeLoyaltyAccount(anyLong());
+                    .when(loyaltyInitService).initializeLoyaltyAccount(anyLong());
 
             assertThatCode(() -> userService.registerUser(registerRequest))
                     .doesNotThrowAnyException();
 
             verify(userRepository).save(any());
-            verify(loyaltyServiceClient).initializeLoyaltyAccount(anyLong());
+            verify(loyaltyInitService).initializeLoyaltyAccount(anyLong());
         }
 
         @Test

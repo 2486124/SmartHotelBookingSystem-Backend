@@ -12,6 +12,4 @@ public class HotelResponse {
     private String imageUrl;
     private Double rating;
     private Boolean approval;
-    // We include the rooms here so when a user views a hotel, they see the rooms available!
-//    private List<RoomResponse> rooms; 
 }

@@ -2,6 +2,7 @@ package com.cts.project.shbs.service.impl;
 
 import java.util.List;
 
+import com.cts.project.shbs.service.LoyaltyInitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,12 +46,9 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final LoyaltyServiceClient loyaltyServiceClient;
     private final AuthenticationManager authenticationManager;
+    private final LoyaltyInitService loyaltyInitService;
     
     private static final String LOYALTY_CB = "loyaltyService";
-    
-    @Lazy
-    @Autowired
-    private UserServiceImpl self;
 
     @Override
     public User registerUser(RegisterRequest request) {
@@ -74,31 +72,14 @@ public class UserServiceImpl implements UserService {
         // Initialize loyalty account for GUEST users only
         if (Role.ROLE_GUEST.equals(savedUser.getRole())) {
             try {
-                self.initializeLoyaltyAccount(savedUser.getUserId());
+                loyaltyInitService.initializeLoyaltyAccount(savedUser.getUserId());
             } catch (Exception e) {
-                log.warn("Loyalty initialization failed for user ID: {}. Will retry later. Reason: {}",
+                log.warn("Loyalty initialization failed for user ID: {}. Reason: {}",
                         savedUser.getUserId(), e.getMessage());
             }
         }
 
         return savedUser;
-    }
-    
-    @CircuitBreaker(name = LOYALTY_CB, fallbackMethod = "loyaltyFallback")
-    @Retry(name = LOYALTY_CB, fallbackMethod = "loyaltyFallback")
-    public void initializeLoyaltyAccount(long userId) {
-        log.info("Initializing loyalty account for GUEST user ID: {}", userId);
-        loyaltyServiceClient.initializeLoyaltyAccount((long) userId);
-        log.info("Loyalty account initialized successfully for user ID: {}", userId);
-    }
-
-    /**
-     * Fallback when circuit is OPEN or all retries exhausted.
-     */
-    public void loyaltyFallback(long userId, Throwable ex) {
-        log.warn("Loyalty service unavailable for user ID: {}. Reason: {}. " +
-                 "Account will be initialized on next retry job.", userId, ex.getMessage());
-        
     }
     
     @Override

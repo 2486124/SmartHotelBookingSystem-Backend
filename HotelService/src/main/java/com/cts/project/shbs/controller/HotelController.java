@@ -223,7 +223,8 @@ public class HotelController {
 					content = @Content(schema = @Schema(implementation = HotelResponse.class))),
 			@ApiResponse(responseCode = "404", description = "Hotel not found", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Access denied", content = @Content) })
-	@PutMapping("/{id}")
+
+    @PutMapping("/{id}")
 	public ResponseEntity<?> updateHotel(
 			@Parameter(description = "ID of the hotel to update", required = true, example = "1") @PathVariable Long id,
 			@Valid @RequestBody HotelRequest request,

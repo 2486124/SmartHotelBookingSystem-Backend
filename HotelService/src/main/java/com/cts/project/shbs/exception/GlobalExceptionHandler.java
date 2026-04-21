@@ -56,6 +56,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.SERVICE_UNAVAILABLE, "Service Unavailable", ex.getMessage());
     }
 
+    @ExceptionHandler(BookingServiceException.class)
+    public ResponseEntity<Map<String, Object>> handleBookingService(BookingServiceException ex) {
+        return build(HttpStatus.SERVICE_UNAVAILABLE, "Service Unavailable", ex.getMessage());
+    }
+
     // ── 500 fallback ─────────────────────────────────────────────────────────
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGlobalException(Exception ex) {

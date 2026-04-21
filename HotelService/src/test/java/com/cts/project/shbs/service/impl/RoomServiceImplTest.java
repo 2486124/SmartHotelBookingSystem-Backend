@@ -337,19 +337,6 @@ class RoomServiceImplTest {
         }
 
         @Test
-        @DisplayName("returns all available rooms directly when booking client returns null response")
-        void nullBookingResponse() {
-            when(bookingClient.getBookedRooms(any(), any(), any())).thenReturn(null);
-            when(roomRepository.findByHotel_HotelIdAndTypeAndAvailabilityTrue(1L, "DELUXE"))
-                    .thenReturn(List.of(room));
-
-            List<Room> result = roomService.getAvailableRooms(filterRequest);
-
-            assertThat(result).hasSize(1);
-            verify(roomRepository).findByHotel_HotelIdAndTypeAndAvailabilityTrue(1L, "DELUXE");
-        }
-
-        @Test
         @DisplayName("returns all available rooms when booking client returns null bookedRoomIds")
         void nullBookedRoomIds() {
             BookedRoomsResponse bookedResp = new BookedRoomsResponse();

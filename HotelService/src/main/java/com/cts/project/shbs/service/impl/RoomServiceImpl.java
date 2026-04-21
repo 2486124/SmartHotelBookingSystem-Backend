@@ -123,10 +123,11 @@ public class RoomServiceImpl implements RoomService {
                 req.getHotelId(), req.getRoomType(), req.getCheckIn(), req.getCheckOut());
 
         BookedRoomsResponse resp = bookingClient.getBookedRooms(
-            req.getHotelId(), req.getCheckIn(), req.getCheckOut()
+                req.getHotelId(), req.getCheckIn(), req.getCheckOut()
         );
 
-        List<Long> bookedIds = (resp != null && resp.getBookedRoomIds() != null)
+        // factory throws BookingServiceException on failure
+        List<Long> bookedIds = resp.getBookedRoomIds() != null
                 ? resp.getBookedRoomIds()
                 : Collections.emptyList();
 
@@ -135,22 +136,22 @@ public class RoomServiceImpl implements RoomService {
 
         if (bookedIds.isEmpty()) {
             return roomRepository.findByHotel_HotelIdAndTypeAndAvailabilityTrue(
-                req.getHotelId(), req.getRoomType()
+                    req.getHotelId(), req.getRoomType()
             );
         }
 
         return roomRepository.findAvailableRooms(
-            req.getHotelId(), req.getRoomType(), bookedIds
+                req.getHotelId(), req.getRoomType(), bookedIds
         );
     }
 
     public List<Room> getAvailableRoomsFallback(RoomFilterRequest req, Throwable ex) {
         log.warn("Booking service unavailable for hotel: {}, type: {}. Reason: {}. " +
-                 "Returning all rooms as available.",
+                        "Returning all rooms as available.",
                 req.getHotelId(), req.getRoomType(), ex.getMessage());
 
         return roomRepository.findByHotel_HotelIdAndTypeAndAvailabilityTrue(
-            req.getHotelId(), req.getRoomType()
+                req.getHotelId(), req.getRoomType()
         );
     }
 }

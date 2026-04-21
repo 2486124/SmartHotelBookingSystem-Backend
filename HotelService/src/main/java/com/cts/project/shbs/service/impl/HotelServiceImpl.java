@@ -56,10 +56,6 @@ public class HotelServiceImpl implements HotelService {
         hotel.setLocation(request.getLocation());
         hotel.setAmenities(request.getAmenities());
         hotel.setImageUrl(request.getImageUrl());
-//        if (request.getRating() != null) {
-//            log.debug("Updating rating for hotel ID: {} to {}", hotelId, request.getRating());
-//            hotel.setRating(request.getRating());
-//        }
 
         Hotel updated = hotelRepository.save(hotel);
         log.info("Hotel ID: {} updated successfully", hotelId);
@@ -129,14 +125,12 @@ public class HotelServiceImpl implements HotelService {
     public void deleteOwnHotel(Long hotelId, Long managerId) {
         log.info("Manager ID: {} requesting deletion of hotel ID: {}", managerId, hotelId);
 
-        // Use ResourceNotFoundException instead of bare RuntimeException
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> {
                     log.error("Hotel not found with ID: {} during manager delete", hotelId);
                     return new ResourceNotFoundException("Hotel not found with ID: " + hotelId);
                 });
 
-        // Use UnauthorizedAccessException instead of bare RuntimeException
         if (!hotel.getManagerId().equals(managerId)) {
             log.warn("Unauthorized delete attempt - manager ID: {} tried to delete hotel ID: {} owned by manager ID: {}",
                     managerId, hotelId, hotel.getManagerId());

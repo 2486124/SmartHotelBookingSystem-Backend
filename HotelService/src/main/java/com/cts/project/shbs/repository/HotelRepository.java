@@ -11,10 +11,11 @@ import java.util.Optional;
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
     // Custom query to only fetch hotels that the Admin has approved
     List<Hotel> findByApprovalTrue();
-    
+
+    // Query to find hotel by manager ID
     Optional<Hotel> findByManagerId(Long managerId);
     
- // Public Search: Must be approved. Name and Location are optional.
+    // Public Search: Must be approved. Name and Location are optional.
     @Query("SELECT h FROM Hotel h WHERE h.approval = true " +
            "AND (:name IS NULL OR LOWER(h.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
            "AND (:location IS NULL OR LOWER(h.location) LIKE LOWER(CONCAT('%', :location, '%')))")

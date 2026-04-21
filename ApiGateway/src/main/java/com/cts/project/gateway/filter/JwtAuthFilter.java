@@ -24,11 +24,11 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     // Routes that don't need a token
     private static final List<String> PUBLIC_PATHS = List.of(
-        "/api/auth/register",
-        "/api/auth/login",
-        "/api/auth/forgot-password",
-        "/api/auth/reset-password",
-        "/api/hotels/approved-hotels"
+            "/api/auth/register",
+            "/api/auth/login",
+            "/api/auth/forgot-password",
+            "/api/auth/reset-password",
+            "/api/hotels/approved-hotels"
     );
 
     private Key key() {
@@ -39,12 +39,12 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
 
-        // 1. Skip validation for public routes
+        // Skip validation for public routes
         if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
         }
 
-        // 2. Extract Authorization header
+        // Extract Authorization header
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -54,7 +54,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         String token = authHeader.substring(7);
 
         try {
-            // 3. Validate JWT and extract claims
+            // Validate JWT and extract claims
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key())
                     .build()
@@ -62,24 +62,21 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                     .getBody();
 
             String userId = claims.getSubject();
-            String role   = claims.get("role", String.class);
+            String role = claims.get("role", String.class);
 
-            // 4. Strip any spoofed headers from the incoming request
-            //    then inject trusted headers for downstream services
+            // Strip any spoof headers from the incoming request
+            // then inject trusted headers for downstream services
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                     .headers(h -> {
                         h.remove("X-User-Id");    // strip spoofed headers first
                         h.remove("X-User-Role");
                     })
-                    .header("X-User-Id",   userId)
+                    .header("X-User-Id", userId)
                     .header("X-User-Role", role)
                     .build();
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
 
-        } catch (ExpiredJwtException e) {
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
         } catch (JwtException | IllegalArgumentException e) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();

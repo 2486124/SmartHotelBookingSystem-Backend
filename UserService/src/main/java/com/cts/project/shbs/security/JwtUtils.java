@@ -3,6 +3,8 @@ package com.cts.project.shbs.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -16,6 +18,8 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class JwtUtils {
 
     @Value("${app.jwt.secret}")
@@ -23,9 +27,8 @@ public class JwtUtils {
 
     @Value("${app.jwt.expirationMs}")
     private int jwtExpirationMs;
-    
-    @Autowired
-    private UserRepository userRepository; // Add this!
+
+    private final UserRepository userRepository;
 
     // Generates a secure key using the secret from application.properties
     private Key key() {
@@ -35,15 +38,15 @@ public class JwtUtils {
     public String generateJwtToken(Authentication authentication) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
         
-        // 1. Get the userId and role from Spring Security
+        // Get the userId and role from Spring Security
         Long userId = Long.parseLong(userPrincipal.getUsername());
         String role = userPrincipal.getAuthorities().iterator().next().getAuthority();
 
-        // 2. Fetch your actual User entity from the database using the email
+        // Fetch your actual User entity from the database using the email
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 3. Build the perfect token
+        // Build the token
         return Jwts.builder()
                 .setSubject(String.valueOf(user.getUserId())) // subject = userId (integer)
                 .claim("role", role)          // Claim is "ROLE_HOTEL_MANAGER"
@@ -65,12 +68,12 @@ public class JwtUtils {
             Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(authToken);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            System.err.println("Invalid JWT token: " + e.getMessage());
+            log.warn("Invalid JWT token: {}", e.getMessage());
         }
         return false;
     }
     
- // Generates a 15-minute password reset token
+    // Generates a 15-minute password reset token
     public String generatePasswordResetToken(User user) {
         return Jwts.builder()
                 .setSubject(String.valueOf(user.getUserId()))

@@ -11,7 +11,8 @@ import java.util.List;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findByHotelHotelId(Long hotelId);
-    
+
+    // Custom query to find available rooms for a hotel and type, excluding already booked rooms
     @Query("""
             SELECT r FROM Room r
             WHERE r.hotel.hotelId = :hotelId
