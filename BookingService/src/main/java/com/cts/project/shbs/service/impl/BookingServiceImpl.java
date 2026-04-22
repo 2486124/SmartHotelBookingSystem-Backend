@@ -11,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cts.project.shbs.dto.BookingPaymentResponse;
@@ -95,9 +96,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public BookingPaymentResponse confirmBooking(RazorpayConfirmRequest request) {
         log.info("Confirming booking — Order ID: {}", request.getRazorpayOrderId());
+
+        boolean roomTaken = bookingRepo.findBookedRoomIds(
+                        request.getHotelId(),
+                        request.getCheckInDate(),
+                        request.getCheckOutDate())
+                .contains(request.getRoomId());
+
+        if (roomTaken) {
+            log.warn("Room ID: {} was booked by another user between order and confirm", request.getRoomId());
+            throw new RoomNotAvailableException("Room was just booked by another user. Please select a different room.");
+        }
 
         if (!verifySignature(request.getRazorpayOrderId(),
                              request.getRazorpayPaymentId(),
