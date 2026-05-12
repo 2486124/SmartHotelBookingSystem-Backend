@@ -1,0 +1,124 @@
+<div class="login-page">
+  <!-- Left panel -->
+  <div class="login-left">
+    <div class="left-overlay"></div>
+    <div class="left-content">
+      <div class="brand">
+        <span class="brand-star">&#9733;</span>
+        <span class="brand-name">HotelVerse</span>
+      </div>
+      <h1>Join the World of Luxury Hospitality</h1>
+      <p>Create your account to unlock curated stays, exclusive rewards, and world-class concierge services.</p>
+      <div class="social-proof">
+        <div class="avatars">
+          <div class="mini-avatar" style="background:#7986cb">A</div>
+          <div class="mini-avatar" style="background:#4db6ac">R</div>
+          <div class="mini-avatar" style="background:#ff8a65">K</div>
+        </div>
+        <span>Trusted by <strong>2,000+</strong> property managers</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <!-- Role toggle -->
+      <div class="role-toggle">
+        <button type="button"
+          class="toggle-btn"
+          [class.active]="selectedRole() === 'ROLE_GUEST'"
+          (click)="setRole('ROLE_GUEST')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          User
+        </button>
+        <button type="button"
+          class="toggle-btn"
+          [class.active]="selectedRole() === 'ROLE_HOTEL_MANAGER'"
+          (click)="setRole('ROLE_HOTEL_MANAGER')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 8v13h6v-7h8v7h6V8L12 3zm0 2.5L20 10v9h-2v-7H6v7H4V10l8-4.5z"/></svg>
+          Manager
+        </button>
+      </div>
+
+      <div class="login-header">
+        <h2>Create Account</h2>
+        <p>{{ selectedRole() === 'ROLE_GUEST' ? 'Start your luxury travel journey.' : 'Register your property on HotelVerse.' }}</p>
+      </div>
+
+      @if (error()) {
+        <div class="alert alert-error">{{ error() }}</div>
+      }
+      @if (success()) {
+        <div class="alert alert-success">{{ success() }} <a routerLink="/login" class="link-accent">Sign in &rarr;</a></div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Full Name</label>
+            <div class="input-icon-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <input type="text" class="form-control" [class.error]="f.name.invalid && f.name.touched"
+                formControlName="name" placeholder="John Doe" autocomplete="name">
+            </div>
+            @if (f.name.invalid && f.name.touched) { <span class="field-error">Name is required.</span> }
+          </div>
+
+          <div class="form-group">
+            <label>Contact Number</label>
+            <div class="input-icon-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6 6l1.27-.88a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </span>
+              <input type="tel" class="form-control" [class.error]="f.contactNumber.invalid && f.contactNumber.touched"
+                formControlName="contactNumber" placeholder="9876543210" autocomplete="tel">
+            </div>
+            @if (f.contactNumber.invalid && f.contactNumber.touched) { <span class="field-error">Contact number is required.</span> }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </span>
+            <input type="email" class="form-control" [class.error]="f.email.invalid && f.email.touched"
+              formControlName="email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          @if (f.email.invalid && f.email.touched) { <span class="field-error">Valid email required.</span> }
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input [type]="showPass() ? 'text' : 'password'" class="form-control"
+              [class.error]="f.password.invalid && f.password.touched"
+              formControlName="password" placeholder="Min. 8 characters" autocomplete="new-password">
+            <button type="button" class="input-icon-right" (click)="showPass.set(!showPass())">
+              @if (showPass()) {
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              } @else {
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              }
+            </button>
+          </div>
+          @if (f.password.invalid && f.password.touched) { <span class="field-error">Password must be at least 6 characters.</span> }
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg sign-btn" [disabled]="loading()">
+          @if (loading()) { <span class="spinner-sm"></span> Creating account… }
+          @else { Create Account &rarr; }
+        </button>
+      </form>
+
+      <p class="signup-prompt">Already have an account? <a routerLink="/login" class="link-accent">Sign in</a></p>
+    </div>
+  </div>
+</div>

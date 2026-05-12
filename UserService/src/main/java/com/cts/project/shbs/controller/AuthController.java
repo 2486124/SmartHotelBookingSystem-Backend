@@ -165,6 +165,19 @@ public class AuthController {
     }
 
     // --------------------------------------------------------
+    // INTERNAL — inter-service only, no role check
+    // --------------------------------------------------------
+
+    @Operation(summary = "Get user name by ID (inter-service)", description = "Internal endpoint for other microservices to resolve a userId to a name. Not exposed through the API gateway.")
+    @ApiResponse(responseCode = "200", description = "User name returned")
+    @GetMapping("/internal/users/{id}/name")
+    public ResponseEntity<?> getUserNameById(@PathVariable Long id) {
+        log.info("GET /internal/users/{}/name - Inter-service request", id);
+        User user = userService.getUserById(id);
+        return ResponseEntity.ok(java.util.Map.of("userId", user.getUserId(), "name", user.getName()));
+    }
+
+    // --------------------------------------------------------
     // ADMIN ONLY ROUTES
     // --------------------------------------------------------
 
@@ -217,7 +230,8 @@ public class AuthController {
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUserById(
             @RequestHeader("X-User-Role") String userRole,
-            @Parameter(description = "ID of the user to fetch", required = true) @PathVariable Long id) {
+            @Parameter(description = "ID of the user to fetch", required = true)
+            @PathVariable Long id) {
         if (!userRole.equals("ROLE_ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied — Admin role required.");
         }

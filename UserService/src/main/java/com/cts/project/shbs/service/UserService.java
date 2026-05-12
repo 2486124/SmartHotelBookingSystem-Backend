@@ -11,9 +11,9 @@ public interface UserService {
     User registerUser(RegisterRequest request);
     JwtResponse loginUser(LoginRequest request);
     User getUserById(Long id);
-    List<User> getAllUsers();
-    void deleteUser(Long id);
     User updateUserProfile(Long id, RegisterRequest request);
+    void deleteUser(Long id);
+    List<User> getAllUsers();
     List<User> searchUsers(String keyword);
     void forgotPassword(String email);
     void resetPassword(String token, String newPassword);

@@ -30,4 +30,18 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
         List<Room> findByHotel_HotelIdAndTypeAndAvailabilityTrue(
             Long hotelId, String type
         );
+
+        // All-types variants (when roomType filter is omitted)
+        @Query("""
+                SELECT r FROM Room r
+                WHERE r.hotel.hotelId = :hotelId
+                  AND r.availability   = true
+                  AND r.roomId NOT IN  :bookedRoomIds
+                """)
+        List<Room> findAvailableRoomsAllTypes(
+            @Param("hotelId")       Long hotelId,
+            @Param("bookedRoomIds") List<Long> bookedRoomIds
+        );
+
+        List<Room> findByHotel_HotelIdAndAvailabilityTrue(Long hotelId);
 }

@@ -1,0 +1,94 @@
+<app-navbar role="manager" />
+
+<div class="page-wrap">
+  <div class="container">
+    <div class="page-header">
+      <h1>Review Moderation</h1>
+      <p>Engage with your guests and curate the HotelVerse experience. Respond to recent feedback to maintain your high-tier hospitality rating.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <p class="stat-lbl">OVERALL RATING</p>
+        <p class="stat-val">{{ avgRating() | number:'1.1-1' }} <span class="denom">/ 5.0</span></p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-lbl">TOTAL REVIEWS</p>
+        <p class="stat-val">{{ totalReviews() | number }}</p>
+      </div>
+      <div class="stat-card warn">
+        <div class="warn-row">
+          <p class="stat-lbl">PENDING RESPONSES</p>
+          @if (pending() > 0) {
+            <span class="warn-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#c8960c"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            </span>
+          }
+        </div>
+        <p class="stat-val">{{ pending() }}</p>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-overlay"><div class="spinner"></div></div>
+    } @else if (reviews().length === 0) {
+      <div class="empty-state">No reviews yet for your hotel.</div>
+    } @else {
+      <div class="reviews-list">
+        @for (rev of reviews(); track rev.reviewId) {
+          <div class="review-card" [class.has-reply]="!!rev.managerResponse">
+            <div class="rev-header">
+              <div class="rev-left">
+                <div class="rev-avatar">{{ initials(rev.userName || 'Guest') }}</div>
+                <div class="rev-meta">
+                  <strong>{{ rev.userName || 'Guest #' + rev.userId }}</strong>
+                  <div class="rev-sub">
+                    <app-star-rating [rating]="rev.rating" size="sm" />
+                    <span class="verified">Verified Stay</span>
+                    <span class="dot">•</span>
+                    <span class="time">{{ timeAgo(rev.timestamp) }}</span>
+                  </div>
+                </div>
+              </div>
+              <span class="rating-tag" [class.rating-high]="rev.rating >= 4" [class.rating-mid]="rev.rating === 3" [class.rating-low]="rev.rating < 3">
+                ★ {{ rev.rating }}/5
+              </span>
+            </div>
+
+            <p class="rev-text">{{ rev.comment }}</p>
+            <div class="rev-divider"></div>
+
+            @if (rev.managerResponse) {
+              <div class="existing-reply">
+                <p class="reply-label">Your response</p>
+                <p class="reply-text">{{ rev.managerResponse }}</p>
+              </div>
+            } @else {
+              <div class="reply-form">
+                <textarea
+                  class="form-control"
+                  rows="3"
+                  [placeholder]="'Write your response to ' + (rev.userName || 'this guest') + '…'"
+                  [value]="getResponse(rev.reviewId)"
+                  (input)="setResponse(rev.reviewId, $any($event.target).value)">
+                </textarea>
+                <button class="btn btn-primary btn-sm reply-btn"
+                  [disabled]="submitting() === rev.reviewId || !getResponse(rev.reviewId).trim()"
+                  (click)="submit(rev)">
+                  @if (submitting() === rev.reviewId) { Submitting… }
+                  @else {
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Submit Reply
+                  }
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<app-footer variant="manager" />

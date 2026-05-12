@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cts.project.shbs.client.HotelServiceClient;
 import com.cts.project.shbs.dto.BookedRoomsResponse;
+import com.cts.project.shbs.dto.BookingEnrichedResponse;
 import com.cts.project.shbs.dto.HotelResponse;
 import com.cts.project.shbs.dto.RazorpayConfirmRequest;
 import com.cts.project.shbs.dto.RazorpayOrderRequest;
@@ -247,7 +248,7 @@ public class BookingController {
                     .body("Access denied — you do not manage this hotel");
         }
 
-        List<Booking> bookings = bookingService.getBookingsByHotelId(hotelId);
+        List<BookingEnrichedResponse> bookings = bookingService.getBookingsByHotelIdEnriched(hotelId);
         if (bookings.isEmpty()) {
             return ResponseEntity.ok("No bookings found for Hotel ID: " + hotelId);
         }

@@ -1,0 +1,325 @@
+<!-- ─────────────────── TOP NAV ─────────────────── -->
+<nav class="lp-nav">
+  <div class="lp-nav-inner">
+    <a class="lp-logo" routerLink="/">
+      <img src="/logo.png" alt="HotelVerse logo" class="lp-logo-img" />
+      HotelVerse
+    </a>
+    <div class="lp-nav-actions">
+      <a routerLink="/login"    class="lp-nav-link">Sign In</a>
+      <a routerLink="/register" class="lp-btn-cta">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─────────────────── HERO ─────────────────── -->
+<section class="lp-hero">
+  <div class="lp-hero-overlay"></div>
+  <div class="lp-hero-content">
+    <span class="lp-eyebrow">Welcome To HotelVerse</span>
+    <h1>Find Your Next<br><span class="hero-highlight">Perfect Stay</span></h1>
+    <p class="lp-hero-sub">
+      From boutique escapes to grand luxury suites - book instantly,
+      earn rewards, and experience hospitality reimagined.
+    </p>
+    <div class="lp-hero-ctas">
+      <a routerLink="/login" class="lp-cta-primary">
+        Explore Hotels
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+      <a routerLink="/register" class="lp-cta-outline">List Your Property</a>
+    </div>
+    <div class="lp-social-proof">
+      <div class="lp-avatars">
+        <div class="lp-av" style="background:#7986cb">V</div>
+        <div class="lp-av" style="background:#4db6ac">S</div>
+        <div class="lp-av" style="background:#ff8a65">A</div>
+        <div class="lp-av" style="background:#ba68c8">D</div>
+      </div>
+      <span>Trusted by <strong>12,000+</strong> travelers worldwide</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────── STATS BAR ─────────────────── -->
+<div class="lp-stats-wrap">
+  <div class="lp-container">
+    <div class="lp-stats-card">
+      @for (s of stats; track s.label; let last = $last) {
+        <div class="lp-stat">
+          <span class="lp-stat-val">{{ s.value }}</span>
+          <span class="lp-stat-label">{{ s.label }}</span>
+        </div>
+        @if (!last) { <div class="lp-stat-divider"></div> }
+      }
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────── GUEST FEATURES ─────────────────── -->
+<section class="lp-section lp-features">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <span class="lp-label">FOR TRAVELERS</span>
+      <h2>Everything You Need for the Perfect Trip</h2>
+      <p>Book with confidence. Earn with every stay. Travel smarter.</p>
+    </div>
+    <div class="lp-features-grid">
+
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon navy">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h3>Curated Hotels</h3>
+        <p>Every property on HotelVerse is verified and handpicked for quality, comfort, and exceptional service.</p>
+      </div>
+
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon gold">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <h3>Instant Booking</h3>
+        <p>Reserve your room in seconds. Real-time availability, instant confirmation — no waiting, no hassle.</p>
+      </div>
+
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon navy">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1l3.09 6.26L22 8.27l-5 4.87 1.18 6.88L12 17.17l-6.18 3.25L7 13.14 2 8.27l6.91-1.01L12 1z"/>
+          </svg>
+        </div>
+        <h3>Loyalty Rewards</h3>
+        <p>Earn 10 points per ₹100 spent. Redeem for exclusive discounts on every future stay you make.</p>
+      </div>
+
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon gold">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h3>Secure &amp; Private</h3>
+        <p>Your data and payments are protected end-to-end. Book with total confidence every single time.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────── HOW IT WORKS ─────────────────── -->
+<section class="lp-section lp-how">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <span class="lp-label">HOW IT WORKS</span>
+      <h2>Book Your Stay in Three Simple Steps</h2>
+      <p>We've made the entire experience effortless — from first search to checkout.</p>
+    </div>
+    <div class="lp-steps">
+      @for (step of steps; track step.num; let last = $last) {
+        <div class="lp-step">
+          <div class="lp-step-num">{{ step.num }}</div>
+          <div class="lp-step-body">
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.desc }}</p>
+          </div>
+        </div>
+        @if (!last) {
+          <div class="lp-step-connector">
+            <svg width="40" height="16" viewBox="0 0 40 16" fill="none">
+              <path d="M0 8 H32 M28 2 L38 8 L28 14" stroke="#c8960c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────── FOR MANAGERS ─────────────────── -->
+<section class="lp-managers">
+  <div class="lp-managers-overlay"></div>
+  <div class="lp-container lp-managers-inner">
+    <div class="lp-managers-content">
+      <span class="lp-label lp-label-light">FOR HOTEL MANAGERS</span>
+      <h2>Grow Your Property.<br>Reach More Guests.</h2>
+      <p>
+        HotelVerse gives hotel managers a powerful, easy-to-use platform to
+        list rooms, manage bookings, and build their reputation — all in one place.
+      </p>
+      <ul class="lp-manager-features">
+        @for (feat of managerFeatures; track feat) {
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            {{ feat }}
+          </li>
+        }
+      </ul>
+      <div class="lp-manager-ctas">
+        <a routerLink="/register" class="lp-cta-gold">
+          Register as Manager
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+        <a routerLink="/login" class="lp-cta-ghost">Already registered? Sign in</a>
+      </div>
+    </div>
+    <div class="lp-managers-visual">
+      <div class="lp-dash-mockup">
+        <div class="dash-topbar">
+          <div class="dash-dot red"></div>
+          <div class="dash-dot amber"></div>
+          <div class="dash-dot green"></div>
+          <span>Manager Dashboard</span>
+        </div>
+        <div class="dash-body">
+          <div class="dash-stats-row">
+            <div class="dash-stat-box">
+              <span class="dsb-val">24</span>
+              <span class="dsb-lbl">Bookings</span>
+            </div>
+            <div class="dash-stat-box">
+              <span class="dsb-val">12</span>
+              <span class="dsb-lbl">Rooms</span>
+            </div>
+            <div class="dash-stat-box accent">
+              <span class="dsb-val">4.8</span>
+              <span class="dsb-lbl">Rating</span>
+            </div>
+          </div>
+          <div class="dash-rows">
+            <div class="dash-row">
+              <div class="dash-row-thumb"></div>
+              <div class="dash-row-lines">
+                <div class="dash-line long"></div>
+                <div class="dash-line short"></div>
+              </div>
+              <div class="dash-chip confirmed">Confirmed</div>
+            </div>
+            <div class="dash-row">
+              <div class="dash-row-thumb"></div>
+              <div class="dash-row-lines">
+                <div class="dash-line med"></div>
+                <div class="dash-line short"></div>
+              </div>
+              <div class="dash-chip pending">Pending</div>
+            </div>
+            <div class="dash-row">
+              <div class="dash-row-thumb"></div>
+              <div class="dash-row-lines">
+                <div class="dash-line long"></div>
+                <div class="dash-line med"></div>
+              </div>
+              <div class="dash-chip confirmed">Confirmed</div>
+            </div>
+          </div>
+          <div class="dash-bar-chart">
+            <div class="dash-bar" style="height:55%"></div>
+            <div class="dash-bar" style="height:75%"></div>
+            <div class="dash-bar" style="height:60%"></div>
+            <div class="dash-bar accent" style="height:90%"></div>
+            <div class="dash-bar" style="height:70%"></div>
+            <div class="dash-bar" style="height:80%"></div>
+            <div class="dash-bar accent" style="height:95%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────── TESTIMONIALS ─────────────────── -->
+<section class="lp-section lp-testimonials">
+  <div class="lp-container">
+    <div class="lp-section-head">
+      <span class="lp-label">WHAT PEOPLE SAY</span>
+      <h2>Loved by Travelers &amp; Managers Alike</h2>
+      <p>Thousands of people trust HotelVerse for their hospitality needs every day.</p>
+    </div>
+    <div class="lp-testi-grid">
+      @for (t of testimonials; track t.name) {
+        <div class="lp-testi-card">
+          <div class="lp-testi-stars">
+            @for (s of stars(t.rating); track $index) {
+              <span>&#9733;</span>
+            }
+          </div>
+          <p class="lp-testi-quote">"{{ t.quote }}"</p>
+          <div class="lp-testi-author">
+            <div class="lp-testi-av" [style.background]="t.color">{{ t.initials }}</div>
+            <div>
+              <p class="lp-testi-name">{{ t.name }}</p>
+              <p class="lp-testi-loc">{{ t.location }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────── DUAL CTA ─────────────────── -->
+<section class="lp-dual-cta">
+  <div class="lp-container">
+    <!-- lp-dual-inner is separate from lp-container so padding doesn't inset the panels -->
+    <div class="lp-dual-inner">
+
+      <div class="lp-cta-panel guests">
+        <span class="lp-label lp-label-light">FOR TRAVELERS</span>
+        <h3>Ready to find your perfect hotel?</h3>
+        <p>Join thousands of travelers already booking smarter with HotelVerse.</p>
+        <a routerLink="/login" class="lp-cta-white">
+          Start Exploring
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="lp-cta-panel managers">
+        <span class="lp-label">FOR MANAGERS</span>
+        <h3>Own a hotel? List it for free.</h3>
+        <p>Reach thousands of verified guests and grow your occupancy with zero commission.</p>
+        <a routerLink="/register" class="lp-cta-gold">
+          List Your Property
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────── FOOTER ─────────────────── -->
+<footer class="lp-footer">
+  <div class="lp-container lp-footer-inner">
+    <div class="lp-footer-brand">
+      <img src="/logo.png" alt="HotelVerse logo" class="lp-logo-img lp-logo-img--footer" />
+      <span>HotelVerse</span>
+    </div>
+    <p class="lp-footer-copy">&copy; {{ year }} HotelVerse. All rights reserved.</p>
+    <div class="lp-footer-links">
+      <a routerLink="/login">Sign In</a>
+      <a routerLink="/register">Register</a>
+    </div>
+  </div>
+</footer>

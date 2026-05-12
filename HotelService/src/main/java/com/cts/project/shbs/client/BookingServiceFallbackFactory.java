@@ -1,15 +1,9 @@
 package com.cts.project.shbs.client;
 
-import java.time.LocalDate;
-import java.util.Collections;
-
+import com.cts.project.shbs.exception.BookingServiceException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
-
-import com.cts.project.shbs.dto.BookedRoomsResponse;
-import com.cts.project.shbs.exception.BookingServiceException;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j

@@ -134,15 +134,17 @@ public class RoomServiceImpl implements RoomService {
         log.info("Hotel {} | type '{}' | booked room IDs: {}",
                 req.getHotelId(), req.getRoomType(), bookedIds);
 
+        boolean hasType = req.getRoomType() != null && !req.getRoomType().isBlank();
+
         if (bookedIds.isEmpty()) {
-            return roomRepository.findByHotel_HotelIdAndTypeAndAvailabilityTrue(
-                    req.getHotelId(), req.getRoomType()
-            );
+            return hasType
+                ? roomRepository.findByHotel_HotelIdAndTypeAndAvailabilityTrue(req.getHotelId(), req.getRoomType())
+                : roomRepository.findByHotel_HotelIdAndAvailabilityTrue(req.getHotelId());
         }
 
-        return roomRepository.findAvailableRooms(
-                req.getHotelId(), req.getRoomType(), bookedIds
-        );
+        return hasType
+            ? roomRepository.findAvailableRooms(req.getHotelId(), req.getRoomType(), bookedIds)
+            : roomRepository.findAvailableRoomsAllTypes(req.getHotelId(), bookedIds);
     }
 
     public List<Room> getAvailableRoomsFallback(RoomFilterRequest req, Throwable ex) {
@@ -150,8 +152,9 @@ public class RoomServiceImpl implements RoomService {
                         "Returning all rooms as available.",
                 req.getHotelId(), req.getRoomType(), ex.getMessage());
 
-        return roomRepository.findByHotel_HotelIdAndTypeAndAvailabilityTrue(
-                req.getHotelId(), req.getRoomType()
-        );
+        boolean hasType = req.getRoomType() != null && !req.getRoomType().isBlank();
+        return hasType
+            ? roomRepository.findByHotel_HotelIdAndTypeAndAvailabilityTrue(req.getHotelId(), req.getRoomType())
+            : roomRepository.findByHotel_HotelIdAndAvailabilityTrue(req.getHotelId());
     }
 }

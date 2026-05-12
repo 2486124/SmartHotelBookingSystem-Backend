@@ -1,0 +1,226 @@
+@charset "UTF-8";
+.login-page {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f6fa;
+}
+
+/* ── Left panel ─────────────────────────────────────────── */
+.login-left {
+  flex: 0 0 50%;
+  max-width: 50%;
+  position: relative;
+  background: url("https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=900&q=80") center/cover no-repeat;
+  display: flex;
+  align-items: flex-end;
+  padding: 48px;
+}
+@media (max-width: 768px) {
+  .login-left {
+    display: none;
+  }
+}
+
+.left-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(10, 15, 80, 0.55) 0%, rgba(10, 15, 80, 0.85) 100%);
+}
+
+.left-content {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.brand .brand-star {
+  color: #c8960c;
+  font-size: 1.4rem;
+}
+.brand .brand-name {
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.login-left h1 {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.login-left p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 380px;
+  margin-bottom: 32px;
+}
+
+.social-proof {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+.social-proof strong {
+  color: #fff;
+}
+
+.avatars {
+  display: flex;
+}
+.avatars .mini-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: -8px;
+}
+
+/* ── Right panel ─────────────────────────────────────────── */
+.login-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+  background: #fff;
+}
+
+.login-form-wrap {
+  width: 100%;
+  max-width: 420px;
+}
+
+.login-header {
+  margin-bottom: 28px;
+}
+.login-header h2 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+}
+.login-header p {
+  font-size: 0.9rem;
+  color: #9090a8;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #c8960c;
+}
+
+.forgot-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1a237e;
+  text-decoration: none;
+  align-self: flex-end;
+  margin-top: 2px;
+}
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+.sign-btn {
+  margin-top: 8px;
+  background: #1a237e;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 15px;
+  letter-spacing: 0.01em;
+  transition: background 0.2s, transform 0.15s;
+}
+.sign-btn:hover:not(:disabled) {
+  background: #0d1462;
+  transform: translateY(-1px);
+}
+
+.signup-prompt {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.88rem;
+  color: #9090a8;
+}
+
+.link-accent {
+  color: #1a237e;
+  font-weight: 600;
+  text-decoration: none;
+}
+.link-accent:hover {
+  text-decoration: underline;
+}
+
+.info-box {
+  margin-top: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fffbee;
+  border: 1px solid rgba(200, 150, 12, 0.25);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.84rem;
+  color: #6b5000;
+  line-height: 1.5;
+}
+.info-box svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #c8960c;
+}
+
+.field-error {
+  font-size: 0.78rem;
+  color: #c62828;
+  margin-top: 2px;
+}
+
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Mobile ─────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .login-right { padding: 32px 20px; }
+  .login-header h2 { font-size: 1.5rem; }
+}

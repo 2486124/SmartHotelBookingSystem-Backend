@@ -1,0 +1,14 @@
+<span class="stars" [class]="'stars--' + size()">
+  @for (star of stars; track $index) {
+    <span
+      class="star"
+      [class.filled]="star.filled"
+      [class.half]="star.half"
+      [class.interactive]="!readonly()"
+      (click)="select($index)">
+      @if (star.filled) { ★ }
+      @else if (star.half) { ⯨ }
+      @else { ☆ }
+    </span>
+  }
+</span>

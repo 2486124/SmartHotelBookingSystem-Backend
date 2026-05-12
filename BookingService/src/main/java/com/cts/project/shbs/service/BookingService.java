@@ -1,5 +1,6 @@
 package com.cts.project.shbs.service;
 
+import com.cts.project.shbs.dto.BookingEnrichedResponse;
 import com.cts.project.shbs.dto.BookingPaymentResponse;
 import com.cts.project.shbs.dto.RazorpayConfirmRequest;
 import com.cts.project.shbs.dto.RazorpayOrderRequest;
@@ -20,5 +21,6 @@ public interface BookingService {
     List<Booking> getAllBookings();
     List<Booking> getBookingsByUserId(Long userId);
     List<Booking> getBookingsByHotelId(Long hotelId);
+    List<BookingEnrichedResponse> getBookingsByHotelIdEnriched(Long hotelId);
     List<Long> getBookedRoomIds(Long hotelId, LocalDate checkIn, LocalDate checkOut);
 }

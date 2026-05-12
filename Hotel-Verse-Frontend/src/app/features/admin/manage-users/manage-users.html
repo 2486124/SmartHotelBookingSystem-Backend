@@ -1,0 +1,132 @@
+<app-navbar role="admin" />
+
+<div class="page-wrap">
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1>User Management</h1>
+        <p>Monitor and manage all registered accounts across the HotelVerse platform.</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card accent-navy">
+        <div class="stat-left">
+          <p class="stat-label">TOTAL USERS</p>
+          <p class="stat-val">{{ totalUsers() | number }}</p>
+        </div>
+        <div class="stat-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+      </div>
+      <div class="stat-card accent-green">
+        <div class="stat-left">
+          <p class="stat-label">REGISTERED GUESTS</p>
+          <p class="stat-val">{{ guestCount() | number }}</p>
+        </div>
+        <div class="stat-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+      </div>
+      <div class="stat-card accent-gold">
+        <div class="stat-left">
+          <p class="stat-label">HOTEL MANAGERS</p>
+          <p class="stat-val">{{ managerCount() | number }}</p>
+        </div>
+        <div class="stat-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8a6000" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search by name or email…" [value]="search" (input)="search = $any($event.target).value; onSearch()">
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-overlay"><div class="spinner"></div></div>
+    } @else if (displayed().length === 0) {
+      <div class="empty-state">No users found.</div>
+    } @else {
+      <div class="table-wrap">
+        <table class="hv-table">
+          <thead>
+            <tr>
+              <th>USER</th>
+              <th>EMAIL</th>
+              <th>ROLE</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of displayed(); track u.userId) {
+              <tr>
+                <td>
+                  <div class="user-cell">
+                    <div class="avatar">{{ initials(u.name) }}</div>
+                    <div>
+                      <p class="user-name">{{ u.name }}</p>
+                      <p class="user-id">ID: UV-{{ u.userId }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="email-cell">{{ u.email }}</td>
+                <td>
+                  <span class="role-badge" [class]="'role-' + u.role.replace('ROLE_','').toLowerCase()">
+                    {{ roleLabel(u.role) }}
+                  </span>
+                </td>
+                <td>
+                  <button class="delete-btn" (click)="confirmDelete(u)" title="Delete user">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <p class="showing-text">Showing {{ (page()-1)*10+1 }}–{{ pageEnd() }} of {{ allUsers().length }} users</p>
+        @if (totalPages() > 1) {
+          <div class="pagination">
+            <button class="page-btn" [disabled]="page()===1" (click)="goPage(page()-1)">&lsaquo;</button>
+            @for (p of pageNumbers(); track p) {
+              <button class="page-btn" [class.active]="p===page()" (click)="goPage(p)">{{ p }}</button>
+            }
+            <button class="page-btn" [disabled]="page()===totalPages()" (click)="goPage(page()+1)">&rsaquo;</button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Delete confirmation modal -->
+@if (pendingDelete()) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <h3 class="modal-title">Delete User</h3>
+      <p class="modal-body">
+        Are you sure you want to delete <strong>{{ pendingDelete()!.name }}</strong>?
+        This will permanently remove their account and all associated data. This cannot be undone.
+      </p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-confirm-delete" [disabled]="deleting()" (click)="executeDelete()">
+          @if (deleting()) { Deleting… } @else { Yes, Delete }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<app-footer variant="admin" />

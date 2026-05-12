@@ -1,0 +1,102 @@
+<app-navbar role="admin" />
+
+<div class="page-wrap">
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1>Property Inventory</h1>
+        <p>Manage approved hotels, review property details, and remove listings from the platform.</p>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search by name or location…" [value]="search" (input)="search = $any($event.target).value; onSearch()">
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-overlay"><div class="spinner"></div></div>
+    } @else if (displayed().length === 0) {
+      <div class="empty-state">No approved hotels found.</div>
+    } @else {
+      <div class="table-wrap">
+        <table class="hv-table">
+          <thead>
+            <tr>
+              <th>PROPERTY</th>
+              <th>LOCATION</th>
+              <th>RATING</th>
+              <th>AMENITIES</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (h of displayed(); track h.hotelId) {
+              <tr>
+                <td>
+                  <div class="prop-cell">
+                    <img [src]="h.imageUrl || ''" [alt]="h.name" class="prop-img" (error)="imgError($event)">
+                    <div>
+                      <p class="prop-name">{{ h.name }}</p>
+                      <p class="prop-id">ID: HV-{{ h.hotelId }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="loc-cell">{{ h.location }}</td>
+                <td>
+                  <span class="rating-val">{{ h.rating | number:'1.1-1' }}
+                    <span class="star-gold">&#9733;</span>
+                  </span>
+                </td>
+                <td>
+                  <span class="amenities-cell">{{ h.amenities || '—' }}</span>
+                </td>
+                <td>
+                  <button class="delete-btn" (click)="confirmDelete(h)" title="Delete hotel">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <button class="page-btn" [disabled]="page()===1" (click)="goPage(page()-1)">&lsaquo;</button>
+          @for (p of pageNumbers(); track p) {
+            <button class="page-btn" [class.active]="p===page()" (click)="goPage(p)">{{ p }}</button>
+          }
+          <button class="page-btn" [disabled]="page()===totalPages()" (click)="goPage(page()+1)">&rsaquo;</button>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+<!-- Delete confirmation modal -->
+@if (pendingDelete()) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <h3 class="modal-title">Delete Property</h3>
+      <p class="modal-body">
+        Are you sure you want to delete <strong>{{ pendingDelete()!.name }}</strong>?
+        This will permanently remove the hotel and all associated data. This cannot be undone.
+      </p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-confirm-delete" [disabled]="deleting()" (click)="executeDelete()">
+          @if (deleting()) { Deleting… } @else { Yes, Delete }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<app-footer variant="admin" />

@@ -1,0 +1,20 @@
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-logo">
+        <img src="/logo.png" alt="HotelVerse" class="footer-logo-img" /> HotelVerse
+        @if (variant() === 'admin') { <span class="admin-tag">Global Curator</span> }
+        @if (variant() === 'manager') { <span class="manager-tag">Luxury Group</span> }
+      </span>
+      <p class="footer-copy">&copy; {{ year }} HotelVerse Luxury Group. All rights reserved.</p>
+    </div>
+    <div class="footer-links">
+      <a href="">Privacy Policy</a>
+      <a href="">Terms of Service</a>
+      <a href="">Help Center</a>
+      @if (variant() === 'user') { <a href="#">Partner with Us</a> }
+      @if (variant() === 'admin') { <a href="#">System Status</a><a href="#">Help Desk</a> }
+      @if (variant() === 'manager') { <a href="#">Support</a> }
+    </div>
+  </div>
+</footer>

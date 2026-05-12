@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cts.project.shbs.client.UserServiceClient;
+import com.cts.project.shbs.dto.BookingEnrichedResponse;
 import com.cts.project.shbs.dto.BookingPaymentResponse;
 import com.cts.project.shbs.dto.RazorpayConfirmRequest;
 import com.cts.project.shbs.dto.RazorpayOrderRequest;
@@ -46,6 +48,7 @@ public class BookingServiceImpl implements BookingService {
     private final PaymentRepository paymentRepo;
     private final RazorpayClient razorpayClient;
     private final LoyaltyIntegrationService loyaltyService;
+    private final UserServiceClient userServiceClient;
 
     @Value("${razorpay.key.id}")
     private String keyId;
@@ -375,6 +378,43 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = bookingRepo.findByHotelId(hotelId);
         log.info("Total bookings for Hotel ID {}: {}", hotelId, bookings.size());
         return bookings;
+    }
+
+    @Override
+    public List<BookingEnrichedResponse> getBookingsByHotelIdEnriched(Long hotelId) {
+        log.info("Fetching enriched bookings for Hotel ID: {}", hotelId);
+        List<Booking> bookings = bookingRepo.findByHotelId(hotelId);
+
+        return bookings.stream().map(b -> {
+            String userName = "Guest #" + b.getUserId();
+            try {
+                userName = userServiceClient.getUserName(b.getUserId()).getName();
+            } catch (Exception e) {
+                log.warn("Could not fetch user name for User ID: {}", b.getUserId());
+            }
+
+            Double amount = null;
+            try {
+                amount = paymentRepo.findByBookingId(b.getBookingId())
+                        .map(p -> p.getAmount())
+                        .orElse(null);
+            } catch (Exception e) {
+                log.warn("Could not fetch payment for Booking ID: {}", b.getBookingId());
+            }
+
+            return BookingEnrichedResponse.builder()
+                    .bookingId(b.getBookingId())
+                    .userId(b.getUserId())
+                    .roomId(b.getRoomId())
+                    .hotelId(b.getHotelId())
+                    .checkInDate(b.getCheckInDate())
+                    .checkOutDate(b.getCheckOutDate())
+                    .status(b.getStatus())
+                    .paymentId(b.getPaymentId())
+                    .userName(userName)
+                    .totalAmount(amount)
+                    .build();
+        }).toList();
     }
 
     @Override

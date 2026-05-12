@@ -1,0 +1,166 @@
+<app-navbar role="admin" />
+
+<div class="page-wrap">
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1>Review Moderation</h1>
+        <p>Search, filter, and remove guest reviews across all properties on the platform.</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card accent-navy">
+        <div class="stat-left">
+          <p class="stat-label">TOTAL REVIEWS</p>
+          <p class="stat-val">{{ totalReviews() }}</p>
+        </div>
+        <div class="stat-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+      </div>
+      <div class="stat-card accent-gold">
+        <div class="stat-left">
+          <p class="stat-label">AVERAGE RATING</p>
+          <p class="stat-val">{{ avgRating() | number:'1.1-1' }} <span class="star-gold">&#9733;</span></p>
+        </div>
+        <div class="stat-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8a6000" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+      </div>
+      <div class="stat-card accent-green">
+        <div class="stat-left">
+          <p class="stat-label">PROPERTIES REVIEWED</p>
+          <p class="stat-val">{{ propertiesReviewed() }}</p>
+        </div>
+        <div class="stat-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search + Filter -->
+    <div class="controls">
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search by guest name or hotel…" [(ngModel)]="search" (ngModelChange)="applyFilters()">
+      </div>
+      <div class="star-filters">
+        <button class="sf-btn" [class.active]="starFilter()===0" (click)="setStarFilter(0)">All</button>
+        @for (s of [5,4,3,2,1]; track s) {
+          <button class="sf-btn" [class.active]="starFilter()===s" (click)="setStarFilter(s)">{{ s }}&#9733;</button>
+        }
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-overlay"><div class="spinner"></div></div>
+    } @else if (displayedReviews().length === 0) {
+      <div class="empty-state">No reviews found matching your filters.</div>
+    } @else {
+      <div class="review-list">
+        @for (review of displayedReviews(); track review.reviewId) {
+          <div class="review-card">
+            <!-- Hotel name tag at top of card -->
+            <div class="hotel-name-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              {{ hotelName(review.hotelId) }}
+              @if (hotelLocation(review.hotelId)) {
+                <span class="hotel-tag-loc">· {{ hotelLocation(review.hotelId) }}</span>
+              }
+            </div>
+
+            <div class="review-header">
+              <div class="reviewer-info">
+                <div class="reviewer-avatar">{{ guestName(review)[0].toUpperCase() }}</div>
+                <div>
+                  <p class="reviewer-name">{{ guestName(review) }}</p>
+                  <p class="review-date">{{ formatDate(review.timestamp) }}</p>
+                </div>
+              </div>
+              <div class="review-rating">
+                <div class="stars">
+                  @for (s of stars(review.rating); track $index) {
+                    @if (s === 'full') {
+                      <span class="star full">&#9733;</span>
+                    } @else if (s === 'half') {
+                      <span class="star half">&#9733;</span>
+                    } @else {
+                      <span class="star empty">&#9734;</span>
+                    }
+                  }
+                </div>
+                <span class="rating-num">{{ review.rating | number:'1.1-1' }}</span>
+              </div>
+            </div>
+
+            <p class="review-text">{{ review.comment }}</p>
+
+            @if (review.managerResponse) {
+              <div class="manager-reply">
+                <p class="reply-label">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  Hotel Response
+                  @if (review.responseTimestamp) {
+                    <span class="reply-date">· {{ formatDate(review.responseTimestamp) }}</span>
+                  }
+                </p>
+                <p class="reply-text">{{ review.managerResponse }}</p>
+              </div>
+            }
+
+            <div class="review-footer">
+              <p class="remove-note">Removes entire thread and responses permanently</p>
+              <button class="remove-btn" (click)="confirmRemove(review)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                Remove Review
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+        <div class="pagination-wrap">
+          <p class="showing-text">
+            Showing {{ (page()-1)*8+1 }}–{{ pageEnd() }} of {{ filteredReviews().length }} reviews
+          </p>
+          <div class="pagination">
+            <button class="page-btn" [disabled]="page()===1" (click)="goPage(page()-1)">&lsaquo;</button>
+            @for (p of pageNumbers(); track p) {
+              <button class="page-btn" [class.active]="p===page()" (click)="goPage(p)">{{ p }}</button>
+            }
+            <button class="page-btn" [disabled]="page()===totalPages()" (click)="goPage(page()+1)">&rsaquo;</button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+<!-- Remove review modal -->
+@if (pendingRemove()) {
+  <div class="modal-overlay" (click)="cancelRemove()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <h3 class="modal-title">Remove Review</h3>
+      <p class="modal-body">
+        Remove the review by <strong>{{ guestName(pendingRemove()!) }}</strong> for
+        <strong>{{ hotelName(pendingRemove()!.hotelId) }}</strong>?
+        This will permanently delete the review and all manager responses. This cannot be undone.
+      </p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelRemove()">Cancel</button>
+        <button class="btn-confirm-delete" [disabled]="removing()" (click)="executeRemove()">
+          @if (removing()) { Removing… } @else { Yes, Remove }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<app-footer variant="admin" />

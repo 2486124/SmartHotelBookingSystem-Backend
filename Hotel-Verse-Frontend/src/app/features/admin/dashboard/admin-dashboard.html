@@ -1,0 +1,120 @@
+<app-navbar role="admin" />
+
+<div class="page-wrap">
+  <div class="container">
+    <div class="page-header">
+      <h1>Overview</h1>
+      <p class="sub">Welcome back, Curator. Here's what's happening today.</p>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card accent-navy">
+        <div class="kpi-left">
+          <p class="kpi-label">TOTAL LISTINGS</p>
+          <p class="kpi-val">{{ totalListings() }}</p>
+        </div>
+        <div class="kpi-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+      </div>
+      <div class="kpi-card accent-green">
+        <div class="kpi-left">
+          <p class="kpi-label">BOOKINGS THIS MONTH</p>
+          <p class="kpi-val">{{ bookingsMonth() }}</p>
+        </div>
+        <div class="kpi-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+      </div>
+      <div class="kpi-card accent-gold">
+        <div class="kpi-left">
+          <p class="kpi-label">APP USERS</p>
+          <p class="kpi-val">{{ totalUsers() | number }}</p>
+        </div>
+        <div class="kpi-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8a6000" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approval requests -->
+    <div class="approvals-section">
+      <div class="section-row">
+        <div>
+          <h2>Hotel Approval Requests</h2>
+          <p>Review and verify detailed property submissions.</p>
+        </div>
+        <!-- <a href="#" class="view-all">View All Requests &rarr;</a> -->
+      </div>
+
+      @if (loading()) {
+        <div class="loading-overlay"><div class="spinner"></div></div>
+      } @else if (pendingHotels().length === 0) {
+        <div class="empty-state">No pending approval requests.</div>
+      } @else {
+        <div class="approval-list">
+          @for (hotel of pendingHotels(); track hotel.hotelId) {
+            <div class="approval-card">
+              <img [src]="hotel.imageUrl || ''" [alt]="hotel.name" class="approval-img" (error)="imgError($event)">
+              <div class="approval-body">
+                <div class="approval-top">
+                  <div>
+                    <h3>{{ hotel.name }}</h3>
+                    <p class="approval-loc">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      {{ hotel.location }}
+                    </p>
+                  </div>
+                  <div class="approval-actions">
+                    <button class="btn btn-approve" (click)="approve(hotel)">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                      Approve
+                    </button>
+                    <button class="btn btn-deny" (click)="confirmDeny(hotel)">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      Deny
+                    </button>
+                  </div>
+                </div>
+                <div class="approval-meta">
+                  <span class="meta-item"><strong>Rooms:</strong> Pending</span>
+                  <span class="meta-item"><strong>Rating:</strong> {{ hotel.rating || 'N/A' }}</span>
+                  <span class="meta-item"><strong>Submitted:</strong> Recently</span>
+                </div>
+                @if (amenityList(hotel.amenities).length) {
+                  <div class="amenity-tags">
+                    @for (a of amenityList(hotel.amenities); track a) {
+                      <span class="a-tag">{{ a }}</span>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<app-footer variant="admin" />
+
+@if (pendingDeny()) {
+  <div class="modal-overlay" (click)="cancelDeny()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+      <h3 class="modal-title">Deny Hotel</h3>
+      <p class="modal-body">
+        Are you sure you want to deny <strong>{{ pendingDeny()!.name }}</strong>?
+        This will permanently remove the submission. This cannot be undone.
+      </p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelDeny()">Cancel</button>
+        <button class="btn-confirm-delete" (click)="executeDeny()">Yes, Deny</button>
+      </div>
+    </div>
+  </div>
+}
