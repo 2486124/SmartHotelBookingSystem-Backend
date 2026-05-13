@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.cts.project.shbs.client.HotelServiceClient;
 import com.cts.project.shbs.client.LoyaltyServiceClient;
 import com.cts.project.shbs.dto.JwtResponse;
 import com.cts.project.shbs.dto.LoginRequest;
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService {
     private final LoyaltyServiceClient loyaltyServiceClient;
     private final AuthenticationManager authenticationManager;
     private final LoyaltyInitService loyaltyInitService;
+    private final HotelServiceClient hotelServiceClient;
     
     private static final String LOYALTY_CB = "loyaltyService";
 
@@ -127,10 +129,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         log.info("Attempting to delete user with ID: {}", id);
-        if (!userRepository.existsById(id)) {
-            log.warn("Delete failed - user not found with ID: {}", id);
-            throw new UserNotFoundException(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Delete failed - user not found with ID: {}", id);
+                    return new UserNotFoundException(id);
+                });
+
+        if (Role.ROLE_HOTEL_MANAGER.equals(user.getRole())) {
+            try {
+                log.info("User ID: {} is a hotel manager — triggering hotel and booking cascade delete", id);
+                hotelServiceClient.deleteManagerHotel(String.valueOf(id), "ROLE_HOTEL_MANAGER");
+                log.info("Hotel cascade delete completed for manager ID: {}", id);
+            } catch (Exception e) {
+                log.warn("Hotel cascade delete failed for manager ID: {} — proceeding with user deletion. Cause: {}",
+                        id, e.getMessage());
+            }
         }
+
         userRepository.deleteById(id);
         log.info("User deleted successfully with ID: {}", id);
     }

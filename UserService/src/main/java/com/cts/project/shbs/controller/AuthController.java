@@ -230,8 +230,7 @@ public class AuthController {
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUserById(
             @RequestHeader("X-User-Role") String userRole,
-            @Parameter(description = "ID of the user to fetch", required = true)
-            @PathVariable Long id) {
+            @Parameter(description = "ID of the user to fetch", required = true) @PathVariable Long id) {
         if (!userRole.equals("ROLE_ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied — Admin role required.");
         }

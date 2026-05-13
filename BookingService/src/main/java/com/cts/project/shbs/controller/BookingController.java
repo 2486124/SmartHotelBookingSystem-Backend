@@ -291,7 +291,7 @@ public class BookingController {
         @ApiResponse(responseCode = "200", description = "Future bookings cancelled and payments refunded"),
         @ApiResponse(responseCode = "403", description = "Access denied — only HOTEL_MANAGER or ADMIN can cancel future bookings")
     })
-    @PatchMapping("/hotel/cancel-future/{hotelId}")
+    @PutMapping("/hotel/cancel-future/{hotelId}")
     public ResponseEntity<?> cancelFutureBookings(
             @RequestHeader("X-User-Id") String userIdHeader,
             @RequestHeader("X-User-Role") String userRole,

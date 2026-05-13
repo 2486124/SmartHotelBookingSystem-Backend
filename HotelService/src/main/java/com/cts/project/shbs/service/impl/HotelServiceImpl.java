@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.cts.project.shbs.client.BookingServiceClient;
 import com.cts.project.shbs.dto.HotelRequest;
 import com.cts.project.shbs.exception.DuplicateResourceException;
 import com.cts.project.shbs.exception.InvalidRatingException;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class HotelServiceImpl implements HotelService {
 
     private final HotelRepository hotelRepository;
+    private final BookingServiceClient bookingClient;
 
     @Override
     public Hotel createHotel(HotelRequest request, Long managerId) {
@@ -66,6 +68,8 @@ public class HotelServiceImpl implements HotelService {
     public void deleteHotel(Long hotelId) {
         log.warn("Admin deleting hotel ID: {}", hotelId);
         Hotel hotel = getHotelById(hotelId);
+        String result = bookingClient.cancelFutureBookings(hotelId, "0", "ROLE_ADMIN");
+        log.info("Future bookings cancelled before admin hotel delete — hotelId: {}, result: {}", hotelId, result);
         hotelRepository.delete(hotel);
         log.info("Hotel ID: {} deleted successfully by admin", hotelId);
     }
@@ -138,6 +142,8 @@ public class HotelServiceImpl implements HotelService {
                 "Access denied. You can only delete your own hotel.");
         }
 
+        String result = bookingClient.cancelFutureBookings(hotelId, "0", "ROLE_ADMIN");
+        log.info("Future bookings cancelled before manager hotel delete — hotelId: {}, result: {}", hotelId, result);
         hotelRepository.delete(hotel);
         log.info("Hotel ID: {} deleted successfully by manager ID: {}", hotelId, managerId);
     }
