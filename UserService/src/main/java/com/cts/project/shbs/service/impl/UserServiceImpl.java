@@ -158,6 +158,11 @@ public class UserServiceImpl implements UserService {
         existingUser.setName(request.getName());
         existingUser.setContactNumber(request.getContactNumber());
 
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+            log.info("Password updated for user ID: {}", id);
+        }
+
         User updatedUser = userRepository.save(existingUser);
         log.info("Profile updated successfully for user ID: {}", id);
         return updatedUser;
