@@ -3,7 +3,9 @@ package com.cts.project.shbs.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.CreationTimestamp;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -57,4 +59,10 @@ public class Booking {
     @Schema(description = "Payment ID linked to this booking", example = "1")
     @Column(name = "PaymentID")
     private Long paymentId;
+
+    @Schema(description = "Timestamp when the booking was created", example = "2026-05-14T10:30:00")
+    @CreationTimestamp
+    @Column(name = "CreatedAt", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdAt;
 }

@@ -1,6 +1,7 @@
 package com.cts.project.shbs.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.cts.project.shbs.model.Booking.BookingStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -28,6 +29,9 @@ public class BookingEnrichedResponse {
 
     private BookingStatus status;
     private Long paymentId;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdAt;
 
     // Enriched fields
     private String userName;

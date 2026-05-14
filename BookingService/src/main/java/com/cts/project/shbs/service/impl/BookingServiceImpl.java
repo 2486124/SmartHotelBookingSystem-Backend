@@ -411,6 +411,7 @@ public class BookingServiceImpl implements BookingService {
                     .checkOutDate(b.getCheckOutDate())
                     .status(b.getStatus())
                     .paymentId(b.getPaymentId())
+                    .createdAt(b.getCreatedAt())
                     .userName(userName)
                     .totalAmount(amount)
                     .build();
