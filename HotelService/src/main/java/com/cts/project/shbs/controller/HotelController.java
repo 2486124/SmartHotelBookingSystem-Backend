@@ -376,6 +376,21 @@ public class HotelController {
 	}
 
 	// ─────────────────────────────────────────────────────────────────
+	// INTERNAL — inter-service only, no role check
+	// ─────────────────────────────────────────────────────────────────
+
+	@Operation(summary = "Get hotel by ID (inter-service)",
+	           description = "Internal endpoint for other microservices (e.g. BookingService) to resolve a hotelId. Not exposed through the API gateway.")
+	@ApiResponse(responseCode = "200", description = "Hotel returned")
+	@GetMapping("/internal/{id}")
+	public ResponseEntity<?> getHotelByIdInternal(
+			@Parameter(description = "ID of the hotel", required = true) @PathVariable Long id) {
+		log.info("GET /internal/{} — inter-service hotel lookup", id);
+		Hotel hotel = hotelService.getHotelById(id);
+		return ResponseEntity.ok(mapToHotelResponse(hotel));
+	}
+
+	// ─────────────────────────────────────────────────────────────────
 	// HELPER
 	// ─────────────────────────────────────────────────────────────────
 

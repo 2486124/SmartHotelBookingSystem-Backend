@@ -8,18 +8,15 @@ import java.util.List;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.cts.project.shbs.dto.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cts.project.shbs.client.HotelServiceClient;
 import com.cts.project.shbs.client.UserServiceClient;
-import com.cts.project.shbs.dto.BookingEnrichedResponse;
-import com.cts.project.shbs.dto.BookingPaymentResponse;
-import com.cts.project.shbs.dto.RazorpayConfirmRequest;
-import com.cts.project.shbs.dto.RazorpayOrderRequest;
-import com.cts.project.shbs.dto.RazorpayOrderResponse;
 import com.cts.project.shbs.exception.CancellationNotAllowedException;
 import com.cts.project.shbs.exception.InvalidBookingStatusException;
 import com.cts.project.shbs.exception.ResourceNotFoundException;
@@ -49,6 +46,7 @@ public class BookingServiceImpl implements BookingService {
     private final RazorpayClient razorpayClient;
     private final LoyaltyIntegrationService loyaltyService;
     private final UserServiceClient userServiceClient;
+    private final HotelServiceClient hotelServiceClient;
 
     @Value("${razorpay.key.id}")
     private String keyId;
@@ -161,7 +159,7 @@ public class BookingServiceImpl implements BookingService {
 
         loyaltyService.addPendingPoints(request.getUserId(), finalAmount, savedBooking.getBookingId());
 
-        return BookingPaymentResponse.builder()
+        BookingPaymentResponse response = BookingPaymentResponse.builder()
                 .bookingId(savedBooking.getBookingId())
                 .userId(savedBooking.getUserId())
                 .roomId(savedBooking.getRoomId())
@@ -174,6 +172,33 @@ public class BookingServiceImpl implements BookingService {
                 .razorpayOrderId(savedPayment.getRazorpayOrderId())
                 .razorpayPaymentId(savedPayment.getRazorpayPaymentId())
                 .build();
+
+//        try {
+//            String hotelName = "Hotel #" + request.getHotelId();
+//            try {
+//                HotelResponse hotel = hotelServiceClient.getHotelById(request.getHotelId());
+//                if (hotel != null && hotel.getName() != null) hotelName = hotel.getName();
+//            } catch (Exception he) {
+//                log.warn("Could not fetch hotel name for confirmation email — using fallback");
+//            }
+//            userServiceClient.sendBookingNotification(BookingNotificationDto.builder()
+//                    .userId(request.getUserId())
+//                    .bookingId(savedBooking.getBookingId())
+//                    .hotelName(hotelName)
+//                    .checkInDate(request.getCheckInDate())
+//                    .checkOutDate(request.getCheckOutDate())
+//                    .amount(finalAmount)
+//                    .paymentMethod(request.getPaymentMethod().name())
+//                    .redeemPoints(request.isRedeemPoints())
+//                    .type("CONFIRMED")
+//                    .build());
+//            log.info("Booking confirmation notification sent for Booking ID: {}", savedBooking.getBookingId());
+//        } catch (Exception e) {
+//            log.warn("Failed to send booking confirmation notification for Booking ID: {} — {}",
+//                    savedBooking.getBookingId(), e.getMessage());
+//        }
+
+        return response;
     }
 
     @Override
@@ -232,6 +257,28 @@ public class BookingServiceImpl implements BookingService {
 
         loyaltyService.cancelPoints(booking.getUserId(), paidAmount[0], bookingId);
         loyaltyService.revertRedemption(booking.getUserId(), bookingId);
+
+//        try {
+//            String hotelName = "Hotel #" + booking.getHotelId();
+//            try {
+//                HotelResponse hotel = hotelServiceClient.getHotelById(booking.getHotelId());
+//                if (hotel != null && hotel.getName() != null) hotelName = hotel.getName();
+//            } catch (Exception he) {
+//                log.warn("Could not fetch hotel name for cancellation email — using fallback");
+//            }
+//            userServiceClient.sendBookingNotification(BookingNotificationDto.builder()
+//                    .userId(booking.getUserId())
+//                    .bookingId(bookingId)
+//                    .hotelName(hotelName)
+//                    .checkInDate(booking.getCheckInDate())
+//                    .checkOutDate(booking.getCheckOutDate())
+//                    .refundAmount(paidAmount[0])
+//                    .type("CANCELLED")
+//                    .build());
+//            log.info("Cancellation notification sent for Booking ID: {}", bookingId);
+//        } catch (Exception e) {
+//            log.warn("Failed to send cancellation notification for Booking ID: {} — {}", bookingId, e.getMessage());
+//        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.cts.project.shbs.controller;
 
+import com.cts.project.shbs.dto.BookingNotificationRequest;
 import com.cts.project.shbs.dto.ForgotPasswordRequest;
 import com.cts.project.shbs.dto.JwtResponse;
 import com.cts.project.shbs.dto.LoginRequest;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final com.cts.project.shbs.service.EmailService emailService;
 
     // --------------------------------------------------------
     // AUTH
@@ -175,6 +177,42 @@ public class AuthController {
         log.info("GET /internal/users/{}/name - Inter-service request", id);
         User user = userService.getUserById(id);
         return ResponseEntity.ok(java.util.Map.of("userId", user.getUserId(), "name", user.getName()));
+    }
+
+    @Operation(summary = "Send booking notification email (inter-service)", description = "Internal endpoint — BookingService calls this to trigger confirmation or cancellation emails.")
+    @PostMapping("/internal/send-booking-notification")
+    public ResponseEntity<?> sendBookingNotification(@RequestBody BookingNotificationRequest request) {
+        log.info("POST /internal/send-booking-notification - Booking ID: {}, Type: {}", request.getBookingId(), request.getType());
+        try {
+            User user = userService.getUserById(request.getUserId());
+            String checkIn  = request.getCheckInDate() != null  ? request.getCheckInDate().toString()  : "N/A";
+            String checkOut = request.getCheckOutDate() != null ? request.getCheckOutDate().toString() : "N/A";
+
+            if ("CONFIRMED".equals(request.getType())) {
+                emailService.sendBookingConfirmationEmail(
+                    user.getEmail(),
+                    request.getBookingId(),
+                    request.getHotelName(),
+                    checkIn, checkOut,
+                    request.getAmount(),
+                    request.getPaymentMethod(),
+                    request.isRedeemPoints()
+                );
+                log.info("Booking confirmation email sent to: {}", user.getEmail());
+            } else if ("CANCELLED".equals(request.getType())) {
+                emailService.sendCancellationEmail(
+                    user.getEmail(),
+                    request.getBookingId(),
+                    request.getHotelName(),
+                    checkIn, checkOut,
+                    request.getRefundAmount()
+                );
+                log.info("Cancellation email sent to: {}", user.getEmail());
+            }
+        } catch (Exception e) {
+            log.warn("Failed to send booking notification email for Booking ID: {} — {}", request.getBookingId(), e.getMessage());
+        }
+        return ResponseEntity.ok("Notification processed.");
     }
 
     // --------------------------------------------------------
