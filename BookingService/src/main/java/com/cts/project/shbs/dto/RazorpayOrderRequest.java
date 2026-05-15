@@ -21,7 +21,7 @@ public class RazorpayOrderRequest {
     private Long hotelId;
 
     @NotNull(message = "Check-in date is required")
-    @Future(message = "Check-in date must be a future date")
+    @FutureOrPresent(message = "Check-in date must be today or a future date")
     private LocalDate checkInDate;
 
     @NotNull(message = "Check-out date is required")

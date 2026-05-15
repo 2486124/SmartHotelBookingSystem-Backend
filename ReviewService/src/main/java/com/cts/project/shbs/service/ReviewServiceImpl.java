@@ -1,6 +1,8 @@
 package com.cts.project.shbs.service;
 
 import java.time.LocalDateTime;
+
+import com.cts.project.shbs.dto.UserNameResponse;
 import feign.FeignException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cts.project.shbs.client.BookingServiceClient;
 import com.cts.project.shbs.client.HotelServiceClient;
+import com.cts.project.shbs.client.UserServiceClient;
 import com.cts.project.shbs.dto.ReviewRequestDTO;
 import com.cts.project.shbs.dto.ReviewResponseDTO;
 import com.cts.project.shbs.exception.HotelServiceException;
@@ -37,6 +40,9 @@ public class ReviewServiceImpl implements ReviewServiceIntf {
 
     @Autowired
     private BookingServiceClient bookingServiceClient;
+
+    @Autowired
+    private UserServiceClient userServiceClient;
 
     @Override
     @Transactional
@@ -268,6 +274,7 @@ public class ReviewServiceImpl implements ReviewServiceIntf {
         return ReviewResponseDTO.builder()
                 .reviewId(review.getReviewId())
                 .userId(review.getUserId())
+                .userName(resolveUserName(review.getUserId()))
                 .hotelId(review.getHotelId())
                 .rating(review.getRating())
                 .comment(review.getComment())
@@ -275,5 +282,18 @@ public class ReviewServiceImpl implements ReviewServiceIntf {
                 .managerResponse(review.getManagerResponse())
                 .responseTimestamp(review.getResponseTimestamp())
                 .build();
+    }
+
+    /** Resolves a userId to a display name via UserService.
+     *  Returns "Guest" gracefully if the service is unavailable or the user is not found. */
+    private String resolveUserName(Long userId) {
+        try {
+            UserNameResponse response = userServiceClient.getUserName(userId);
+            return (response != null && response.getName() != null) ? response.getName() : "Guest";
+        } catch (Exception e) {
+            logger.warn("resolveUserName() - Could not resolve name for userId={} | Reason: {}",
+                    userId, e.getMessage());
+            return "Guest";
+        }
     }
 }
