@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cts.project.shbs.dto.HotelRequest;
 import com.cts.project.shbs.dto.HotelResponse;
 import com.cts.project.shbs.dto.RoomFilterRequest;
+import com.cts.project.shbs.dto.RoomResponse;
 import com.cts.project.shbs.model.Hotel;
 import com.cts.project.shbs.model.Room;
 import com.cts.project.shbs.service.HotelService;
@@ -388,6 +389,24 @@ public class HotelController {
 		log.info("GET /internal/{} — inter-service hotel lookup", id);
 		Hotel hotel = hotelService.getHotelById(id);
 		return ResponseEntity.ok(mapToHotelResponse(hotel));
+	}
+
+	@Operation(summary = "Get room by ID (inter-service)",
+	           description = "Internal endpoint for other microservices to resolve a roomId to room details.")
+	@ApiResponse(responseCode = "200", description = "Room returned")
+	@GetMapping("/internal/rooms/{roomId}")
+	public ResponseEntity<RoomResponse> getRoomByIdInternal(
+			@Parameter(description = "ID of the room", required = true) @PathVariable Long roomId) {
+		log.info("GET /internal/rooms/{} — inter-service room lookup", roomId);
+		Room room = roomService.getRoomById(roomId);
+		RoomResponse response = new RoomResponse();
+		response.setRoomId(room.getRoomId());
+		response.setType(room.getType());
+		response.setPrice(room.getPrice());
+		response.setAvailability(room.getAvailability());
+		response.setFeatures(room.getFeatures());
+		response.setImageUrl(room.getImageUrl());
+		return ResponseEntity.ok(response);
 	}
 
 	// ─────────────────────────────────────────────────────────────────

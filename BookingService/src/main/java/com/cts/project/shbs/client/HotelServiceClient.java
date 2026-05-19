@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.cts.project.shbs.dto.HotelResponse;
+import com.cts.project.shbs.dto.RoomResponse;
 
 @FeignClient(name = "hotel-service")
 public interface HotelServiceClient {
@@ -18,4 +19,11 @@ public interface HotelServiceClient {
 
     @GetMapping("/api/hotels/internal/{id}")
     HotelResponse getHotelById(@PathVariable("id") Long hotelId);
+
+    @GetMapping("/api/hotels/{hotelId}/rooms/{roomId}")
+    RoomResponse getRoomById(
+        @PathVariable("hotelId") Long hotelId,
+        @PathVariable("roomId") Long roomId,
+        @RequestHeader("X-User-Role") String userRole
+    );
 }

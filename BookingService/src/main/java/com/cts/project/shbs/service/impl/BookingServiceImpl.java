@@ -404,11 +404,57 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllBookings() {
-        log.info("Fetching all bookings");
+    public List<BookingEnrichedResponse> getAllBookings() {
+        log.info("Fetching all bookings (enriched)");
         List<Booking> bookings = bookingRepo.findAll();
         log.info("Total bookings found: {}", bookings.size());
-        return bookings;
+
+        return bookings.stream().map(b -> {
+            String userName = null;
+            try {
+                userName = userServiceClient.getUserName(b.getUserId()).getName();
+            } catch (Exception e) {
+                log.warn("Could not fetch user name for User ID: {}", b.getUserId());
+            }
+
+            Double amount = null;
+            try {
+                amount = paymentRepo.findByBookingId(b.getBookingId())
+                        .map(p -> p.getAmount())
+                        .orElse(null);
+            } catch (Exception e) {
+                log.warn("Could not fetch payment for Booking ID: {}", b.getBookingId());
+            }
+
+            String hotelName = null;
+            try {
+                hotelName = hotelServiceClient.getHotelById(b.getHotelId()).getName();
+            } catch (Exception e) {
+                log.warn("Could not fetch hotel name for Hotel ID: {}", b.getHotelId());
+            }
+
+            String roomType = null;
+            try {
+                roomType = hotelServiceClient.getRoomById(b.getHotelId(), b.getRoomId(), "ROLE_HOTEL_MANAGER").getType();
+            } catch (Exception e) {
+                log.warn("Could not fetch room type for Room ID: {}", b.getRoomId());
+            }
+
+            return BookingEnrichedResponse.builder()
+                    .bookingId(b.getBookingId())
+                    .userId(b.getUserId())
+                    .roomId(b.getRoomId())
+                    .hotelId(b.getHotelId())
+                    .checkInDate(b.getCheckInDate())
+                    .checkOutDate(b.getCheckOutDate())
+                    .status(b.getStatus())
+                    .paymentId(b.getPaymentId())
+                    .userName(userName)
+                    .totalAmount(amount)
+                    .hotelName(hotelName)
+                    .roomType(roomType)
+                    .build();
+        }).toList();
     }
 
     @Override

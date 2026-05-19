@@ -36,4 +36,6 @@ public class BookingEnrichedResponse {
     // Enriched fields
     private String userName;
     private Double totalAmount;
+    private String hotelName;
+    private String roomType;
 }

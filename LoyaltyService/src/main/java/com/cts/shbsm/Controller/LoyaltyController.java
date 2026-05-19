@@ -34,10 +34,10 @@ public class LoyaltyController {
     @Value("${loyalty.min.redemption.points}")
     private int minRedemptionPoints;
 
-    @Operation(summary = "Add Pending Points")
+    @Operation(summary = "Add Pending Points", description = "Adds loyalty points to the user's pending balance based on the amount spent on a booking. Called internally by BookingService after a confirmed booking.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Points added to pending successfully"),
-        @ApiResponse(responseCode = "404", description = "User account not found",
+        @ApiResponse(responseCode = "200", description = "Points added to pending balance successfully"),
+        @ApiResponse(responseCode = "404", description = "Loyalty account not found for the given userId",
                 content = @Content(schema = @Schema(implementation = ErrorDetailsDto.class)))
     })
     @PostMapping("/add-pending-points")
@@ -47,12 +47,12 @@ public class LoyaltyController {
         return ResponseEntity.ok("Points added. Request processed for User Id: " + request.getUserId());
     }
 
-    @Operation(summary = "Redeem Points")
+    @Operation(summary = "Redeem Points", description = "Redeems 300 loyalty points for a 10% discount on the booking amount. Requires a minimum balance of 300 points.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Redemption successful, discount applied"),
+        @ApiResponse(responseCode = "200", description = "Redemption successful — 300 points deducted and discount applied"),
         @ApiResponse(responseCode = "400", description = "Minimum 300 points required for redemption",
                 content = @Content(schema = @Schema(implementation = ErrorDetailsDto.class))),
-        @ApiResponse(responseCode = "404", description = "User account not found",
+        @ApiResponse(responseCode = "404", description = "Loyalty account not found for the given userId",
                 content = @Content(schema = @Schema(implementation = ErrorDetailsDto.class)))
     })
     @PostMapping("/redeem")
@@ -75,10 +75,11 @@ public class LoyaltyController {
                 + " | Points Deducted: 300");
     }
 
-    @Operation(summary = "Confirm Checkout")
+    @Operation(summary = "Confirm Checkout", description = "Moves pending loyalty points to the user's available balance after a successful checkout. Called internally by BookingService when a booking status changes to CHECKED_OUT.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Points moved to available balance"),
-        @ApiResponse(responseCode = "400", description = "Checkout date is in the future")
+        @ApiResponse(responseCode = "200", description = "Pending points confirmed and moved to available balance"),
+        @ApiResponse(responseCode = "400", description = "Checkout date is in the future — points cannot be confirmed yet"),
+        @ApiResponse(responseCode = "404", description = "Loyalty account not found for the given userId")
     })
     @PostMapping("/confirm-checkout")
     public ResponseEntity<String> confirmPointsAfterCheckout(
@@ -87,10 +88,10 @@ public class LoyaltyController {
         return ResponseEntity.ok("Checkout confirmed for User: " + request.getUserId());
     }
 
-    @Operation(summary = "Cancel Points")
+    @Operation(summary = "Cancel Points", description = "Removes pending loyalty points associated with a cancelled booking. Called internally by BookingService when a booking is cancelled.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Pending points removed successfully"),
-        @ApiResponse(responseCode = "404", description = "Account not found")
+        @ApiResponse(responseCode = "200", description = "Pending points removed successfully for the cancelled booking"),
+        @ApiResponse(responseCode = "404", description = "Loyalty account not found for the given userId")
     })
     @PutMapping("/cancel-points")
     public ResponseEntity<String> reduceCancelledPoints(
@@ -99,10 +100,10 @@ public class LoyaltyController {
         return ResponseEntity.ok("Points adjusted for User Id " + request.getUserId());
     }
 
-    @Operation(summary = "Initialize Account")
+    @Operation(summary = "Initialize Loyalty Account", description = "Creates a new loyalty account for a user with zero points. Called internally by BookingService after user registration.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Loyalty account created successfully"),
-        @ApiResponse(description = "Account already exists")
+        @ApiResponse(responseCode = "409", description = "Loyalty account already exists for this user")
     })
     @PostMapping("/initializeLoyaltyAccount/{userId}")
     public ResponseEntity<String> initializeAccount(
@@ -111,8 +112,11 @@ public class LoyaltyController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Profile initialized for User Id " + userId);
     }
 
-    @Operation(summary = "Revert Redemption")
-    @ApiResponse(responseCode = "200", description = "Points refunded to user balance")
+    @Operation(summary = "Revert Redemption", description = "Restores the 300 points that were deducted during a redemption when the associated booking is cancelled. Called internally by BookingService.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "300 points refunded to the user's available balance"),
+        @ApiResponse(responseCode = "404", description = "Loyalty account or redemption record not found for the given userId and bookingId")
+    })
     @PostMapping("/revert-redemption/{userId}/{bookingId}")
     public ResponseEntity<String> revertRedemption(
             @PathVariable Long userId,

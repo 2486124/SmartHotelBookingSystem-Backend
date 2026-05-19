@@ -170,10 +170,11 @@ public class BookingController {
     // GUEST — own bookings only
     // ─────────────────────────────────────────────────────────────────
 
-    @Operation(summary = "Get all bookings by user")
+    @Operation(summary = "Get own bookings (Guest)", description = "Returns all bookings belonging to the authenticated guest. JWT is validated at the API gateway — user ID and role are forwarded via X-User-Id and X-User-Role headers.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Bookings for user returned successfully"),
-        @ApiResponse(responseCode = "403", description = "Access denied — you can only view your own bookings")
+        @ApiResponse(responseCode = "200", description = "Bookings returned successfully"),
+        @ApiResponse(responseCode = "403", description = "Access denied — only GUEST can view their own bookings"),
+        @ApiResponse(responseCode = "404", description = "No bookings found for this user")
     })
     @GetMapping("/user")
     public ResponseEntity<?> getUserBookings(
@@ -188,10 +189,11 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingsByUserId(userId));
     }
 
-    @Operation(summary = "Get checked out booking status by user")
+    @Operation(summary = "Get checked-out bookings by user", description = "Returns all CHECKED_OUT bookings for the specified guest. Only the guest themselves can access this. JWT is validated at the API gateway — user ID and role are forwarded via headers.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Checked out bookings returned or no bookings message"),
-        @ApiResponse(responseCode = "403", description = "Access denied — GUEST can only view their own bookings")
+        @ApiResponse(responseCode = "200", description = "Checked-out bookings returned, or confirmation message if none exist"),
+        @ApiResponse(responseCode = "403", description = "Access denied — GUEST can only view their own bookings"),
+        @ApiResponse(responseCode = "404", description = "No checked-out bookings found for this user")
     })
     @GetMapping("/status/{userId}")
     public ResponseEntity<?> getBookingStatusByUser(
@@ -286,10 +288,11 @@ public class BookingController {
     // HOTEL_MANAGER, ADMIN
     // ─────────────────────────────────────────────────────────────────
 
-    @Operation(summary = "Cancel future bookings of a hotel before deletion")
+    @Operation(summary = "Cancel all future bookings for a hotel", description = "Cancels all upcoming bookings for the given hotel and processes refunds. Hotel managers can only cancel for their own hotel; admins can cancel for any hotel.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Future bookings cancelled and payments refunded"),
-        @ApiResponse(responseCode = "403", description = "Access denied — only HOTEL_MANAGER or ADMIN can cancel future bookings")
+        @ApiResponse(responseCode = "403", description = "Access denied — only HOTEL_MANAGER (own hotel) or ADMIN can cancel future bookings"),
+        @ApiResponse(responseCode = "404", description = "Hotel not found with the given ID")
     })
     @PutMapping("/hotel/cancel-future/{hotelId}")
     public ResponseEntity<?> cancelFutureBookings(
@@ -333,10 +336,6 @@ public class BookingController {
             @RequestHeader("X-User-Role") String userRole,
             @PathVariable Long id) {
         log.info("Request received — Cancel booking ID: {} by User ID: {}", id, userIdHeader);
-        if (!userRole.equals("ROLE_GUEST") && !userRole.equals("ROLE_HOTEL_MANAGER")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Access denied — only GUEST or HOTEL_MANAGER can cancel bookings");
-        }
 
         Booking booking = bookingService.getBookingById(id);
         Long callerId = Long.parseLong(userIdHeader);

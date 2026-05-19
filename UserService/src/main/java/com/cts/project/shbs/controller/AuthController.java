@@ -179,7 +179,12 @@ public class AuthController {
         return ResponseEntity.ok(java.util.Map.of("userId", user.getUserId(), "name", user.getName()));
     }
 
-    @Operation(summary = "Send booking notification email (inter-service)", description = "Internal endpoint — BookingService calls this to trigger confirmation or cancellation emails.")
+    @Operation(summary = "Send booking notification email (inter-service)", description = "Internal endpoint — BookingService calls this to trigger confirmation or cancellation emails. Not exposed through the API gateway.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Notification processed successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found for the given userId"),
+        @ApiResponse(responseCode = "500", description = "Email delivery failed — error is logged but does not propagate")
+    })
     @PostMapping("/internal/send-booking-notification")
     public ResponseEntity<?> sendBookingNotification(@RequestBody BookingNotificationRequest request) {
         log.info("POST /internal/send-booking-notification - Booking ID: {}, Type: {}", request.getBookingId(), request.getType());

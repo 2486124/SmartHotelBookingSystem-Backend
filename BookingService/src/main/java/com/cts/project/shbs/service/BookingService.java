@@ -18,7 +18,7 @@ public interface BookingService {
     void updateStatusByUserAndHotel(Long userId, Long hotelId, BookingStatus status);
     String cancelFutureBookingsByHotel(Long hotelId);
     Booking getBookingById(Long id);
-    List<Booking> getAllBookings();
+    List<BookingEnrichedResponse> getAllBookings();
     List<Booking> getBookingsByUserId(Long userId);
     List<Booking> getBookingsByHotelId(Long hotelId);
     List<BookingEnrichedResponse> getBookingsByHotelIdEnriched(Long hotelId);
