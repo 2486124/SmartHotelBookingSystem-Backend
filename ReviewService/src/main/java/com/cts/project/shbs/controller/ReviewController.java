@@ -202,10 +202,10 @@ public class ReviewController {
                     .body("Access denied");
         }
         long userId = Long.parseLong(userIdHeader);
-        log.info("REQUEST [GET /api/reviews/user] - getReviewsByUserId()", userId);
+        log.info("REQUEST [GET /api/reviews/user] - getReviewsByUserId() | userId={}", userId);
         try {
             List<ReviewResponseDTO> result = reviewServiceImpl.getReviewsByUserId(userId);
-            log.info("RESPONSE [GET /api/reviews/user] - Fetched {} review(s)", userId, result.size());
+            log.info("RESPONSE [GET /api/reviews/user] - Fetched {} review(s) for userId={}", result.size(), userId);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error("ERROR [GET /api/reviews/user] - Failed to fetch reviews | Error: {}",

@@ -134,11 +134,6 @@ public class ReviewServiceImpl implements ReviewServiceIntf {
             throw new RuntimeException("Failed to fetch reviews due to a database error", ex);
         }
 
-        if (result.isEmpty()) {
-            logger.warn("getHotelReviewsByHotelId() - No reviews found for hotelId={}", hotelId);
-            throw new ResourceNotFoundException("No reviews found for hotel id: " + hotelId);
-        }
-
         logger.info("getHotelReviewsByHotelId() - Found {} review(s) for hotelId={}", result.size(), hotelId);
         return result.stream().map(this::toDTO).collect(Collectors.toList());
     }
@@ -159,11 +154,6 @@ public class ReviewServiceImpl implements ReviewServiceIntf {
         } catch (DataAccessException ex) {
             logger.error("getReviewsByUserId() - DB error for userId={}", userId, ex);
             throw new RuntimeException("Failed to fetch reviews due to a database error", ex);
-        }
-
-        if (result.isEmpty()) {
-            logger.warn("getReviewsByUserId() - No reviews found for userId={}", userId);
-            throw new ResourceNotFoundException("No reviews found for user id: " + userId);
         }
 
         logger.info("getReviewsByUserId() - Found {} review(s) for userId={}", result.size(), userId);

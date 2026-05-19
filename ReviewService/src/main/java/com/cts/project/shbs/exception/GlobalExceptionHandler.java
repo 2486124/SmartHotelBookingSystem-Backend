@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,Object>> handleFeignNotFoundException(FeignException.NotFound ex){
     	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
     			"timestamp",LocalDateTime.now().toString(),
-    			"status",HttpStatus.BAD_REQUEST.value(),
+    			"status",HttpStatus.NOT_FOUND.value(),
     			"error","Feign Client Exception",
     			"message",ex.getMessage()
     			));
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
     	return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(Map.of(
     			"timestamp",LocalDateTime.now().toString(),
     			"status",HttpStatus.BAD_GATEWAY.value(),
-    			"error","Error comunicating with Service using Feign Client",
+    			"error","Error communicating with Service using Feign Client",
     			"message",ex.getMessage()
     			));
     }
@@ -109,7 +109,7 @@ public class GlobalExceptionHandler {
     	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
     			"timestamp",LocalDateTime.now().toString(),
     			"status",HttpStatus.INTERNAL_SERVER_ERROR.value(),
-    			"error","Internal server occured",
+    			"error","Internal server error occurred",
     			"message",ex.getMessage()
     			));
     }
