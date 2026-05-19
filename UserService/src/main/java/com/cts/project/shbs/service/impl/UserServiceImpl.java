@@ -17,6 +17,7 @@ import com.cts.project.shbs.client.LoyaltyServiceClient;
 import com.cts.project.shbs.dto.JwtResponse;
 import com.cts.project.shbs.dto.LoginRequest;
 import com.cts.project.shbs.dto.RegisterRequest;
+import com.cts.project.shbs.dto.UpdateProfileRequest;
 import com.cts.project.shbs.exception.AccountNotFoundException;
 import com.cts.project.shbs.exception.EmailAlreadyExistsException;
 import com.cts.project.shbs.exception.InvalidOrExpiredTokenException;
@@ -151,7 +152,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUserProfile(Long id, RegisterRequest request) {
+    public User updateUserProfile(Long id, UpdateProfileRequest request) {
         log.info("Updating profile for user ID: {}", id);
         User existingUser = getUserById(id);
 

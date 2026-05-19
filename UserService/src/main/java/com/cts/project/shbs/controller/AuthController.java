@@ -6,6 +6,7 @@ import com.cts.project.shbs.dto.JwtResponse;
 import com.cts.project.shbs.dto.LoginRequest;
 import com.cts.project.shbs.dto.RegisterRequest;
 import com.cts.project.shbs.dto.ResetPasswordRequest;
+import com.cts.project.shbs.dto.UpdateProfileRequest;
 import com.cts.project.shbs.exception.AccountNotFoundException;
 import com.cts.project.shbs.model.User;
 import com.cts.project.shbs.service.UserService;
@@ -158,7 +159,7 @@ public class AuthController {
     @PutMapping("/profile")
     public ResponseEntity<?> updateOwnProfile(
             @RequestHeader("X-User-Id") String userIdHeader,
-            @Valid @RequestBody RegisterRequest updateRequest) {
+            @Valid @RequestBody UpdateProfileRequest updateRequest) {
         Long userId = Long.parseLong(userIdHeader);
         log.info("PUT /profile - Update request received for user ID: {}", userId);
         User updatedUser = userService.updateUserProfile(userId, updateRequest);

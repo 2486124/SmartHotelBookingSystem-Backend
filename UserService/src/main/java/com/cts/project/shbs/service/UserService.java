@@ -5,13 +5,14 @@ import java.util.List;
 import com.cts.project.shbs.dto.JwtResponse;
 import com.cts.project.shbs.dto.LoginRequest;
 import com.cts.project.shbs.dto.RegisterRequest;
+import com.cts.project.shbs.dto.UpdateProfileRequest;
 import com.cts.project.shbs.model.User;
 
 public interface UserService {
     User registerUser(RegisterRequest request);
     JwtResponse loginUser(LoginRequest request);
     User getUserById(Long id);
-    User updateUserProfile(Long id, RegisterRequest request);
+    User updateUserProfile(Long id, UpdateProfileRequest request);
     void deleteUser(Long id);
     List<User> getAllUsers();
     List<User> searchUsers(String keyword);
