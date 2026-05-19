@@ -121,9 +121,7 @@ public class BookingServiceImpl implements BookingService {
 
         log.info("Signature verified — saving payment and booking");
 
-        double finalAmount = request.isRedeemPoints()
-                ? Math.round(request.getAmount() * 0.90 * 100.0) / 100.0
-                : request.getAmount();
+        double finalAmount = Math.round(request.getAmount() * 100.0) / 100.0;
         log.info("Final amount — Original: {}, Redeem: {}, Final: {}",
                 request.getAmount(), request.isRedeemPoints(), finalAmount);
 
